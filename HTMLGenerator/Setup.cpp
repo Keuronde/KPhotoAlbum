@@ -207,4 +207,38 @@ bool HTMLGenerator::Setup::html5VideoGenerate() const
     return m_html5VideoGenerate;
 
 }
+
+void HTMLGenerator::Setup::setGenerateHTMLIndexFile( bool generateHTMLIndexFile )
+{
+    m_generateHTMLIndexFile = generateHTMLIndexFile;
+}
+
+bool HTMLGenerator::Setup::generateHTMLIndexFile() const
+{
+    return m_generateHTMLIndexFile;
+
+}
+
+void HTMLGenerator::Setup::setGenerateHTMLImageFile( bool generateHTMLImageFile )
+{
+    m_generateHTMLImageFile = generateHTMLImageFile;
+}
+
+bool HTMLGenerator::Setup::generateHTMLImageFile() const
+{
+    return m_generateHTMLImageFile;
+
+}
+
+
+void HTMLGenerator::Setup::setGenerateJSDatabase( bool generateJSDatabase )
+{
+    m_generateJSDatabase = generateJSDatabase;
+}
+
+bool HTMLGenerator::Setup::generateJSDatabase() const
+{
+    return m_generateJSDatabase;
+
+}
 // vi:expandtab:tabstop=4 shiftwidth=4:

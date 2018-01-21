@@ -87,6 +87,15 @@ public:
     void setHtml5VideoGenerate( bool html5VideoGenerate );
     bool html5VideoGenerate() const;
 
+    void setGenerateHTMLIndexFile( bool generateHTMLIndexFile );
+    bool generateHTMLIndexFile() const;
+    
+    void setGenerateHTMLImageFile( bool generateHTMLImageFile );
+    bool generateHTMLImageFile() const;
+    
+    void setGenerateJSDatabase( bool generateJSDatabase );
+    bool generateJSDatabase() const;
+
 private:
     QString m_title;
     QString m_baseDir;
@@ -106,6 +115,9 @@ private:
     bool m_inlineMovies;
     bool m_html5Video;
     bool m_html5VideoGenerate;
+    bool m_generateHTMLIndexFile;
+    bool m_generateHTMLImageFile;
+    bool m_generateJSDatabase;
 };
 
 }

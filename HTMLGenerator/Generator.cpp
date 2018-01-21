@@ -100,23 +100,29 @@ void HTMLGenerator::Generator::generate()
     for( QList<ImageSizeCheckBox*>::ConstIterator sizeIt = m_setup.activeResolutions().begin();
          sizeIt != m_setup.activeResolutions().end(); ++sizeIt )
     {
-        bool ok = generateIndexPage( (*sizeIt)->width(), (*sizeIt)->height() );
-        if ( !ok )
-            return;
-        const DB::FileNameList imageList = m_setup.imageList();
-        for (int index = 0; index < imageList.size(); ++index) {
-            DB::FileName current = imageList.at(index);
-            DB::FileName prev;
-            DB::FileName next;
-            if ( index != 0 )
-                prev = imageList.at(index - 1);
-            if (index != imageList.size() - 1)
-                next = imageList.at(index + 1);
-            ok = generateContentPage( (*sizeIt)->width(), (*sizeIt)->height(),
-                                      prev, current, next );
-            if (!ok)
-                return;
+		// Do we need to generate an index file ?
+		if (m_setup.generateHTMLIndexFile()){
+			bool ok = generateIndexPage( (*sizeIt)->width(), (*sizeIt)->height() );
+			if ( !ok )
+				return;
         }
+        // Do we need to generate HTML image files ?
+        if(m_setup.generateHTMLImageFile()){
+			const DB::FileNameList imageList = m_setup.imageList();
+			for (int index = 0; index < imageList.size(); ++index) {
+				DB::FileName current = imageList.at(index);
+				DB::FileName prev;
+				DB::FileName next;
+				if ( index != 0 )
+					prev = imageList.at(index - 1);
+				if (index != imageList.size() - 1)
+					next = imageList.at(index + 1);
+				bool ok = generateContentPage( (*sizeIt)->width(), (*sizeIt)->height(),
+										  prev, current, next );
+				if (!ok)
+					return;
+			}
+		}
     }
 
     // Now generate the thumbnail images
@@ -577,6 +583,10 @@ QString HTMLGenerator::Generator::createImage( const DB::FileName& fileName, int
     }
 
     return nameImage( fileName, size );
+}
+
+bool HTMLGenerator::Generator::generateJSDatabase(){
+	return true;
 }
 
 QString HTMLGenerator::Generator::createVideo( const DB::FileName& fileName )

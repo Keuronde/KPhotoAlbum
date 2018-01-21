@@ -1,0 +1,36 @@
+#imageContainer{
+	background-color:#000;
+	position:absolute;
+	top:0px;
+	bottom:0px;
+	left:0px;
+	right:0px;
+}
+
+#image{
+	width:100%;
+	height:100%;
+	object-fit: contain;
+	margin:auto;
+}
+
+#closeButton{
+	position:absolute;
+	top:0px;
+	right:0px;
+}
+
+#toNextImage, #toPrevImage{
+	position:absolute;
+	width:50%;
+	height:100%;
+	top:0px
+}
+
+#toNextImage{
+	left:0px;
+}
+
+#toPrevImage{
+	right:0px;
+}

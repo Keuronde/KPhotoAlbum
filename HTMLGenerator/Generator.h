@@ -51,6 +51,7 @@ protected:
     bool generateIndexPage( int width, int height );
     bool generateContentPage( int width, int height,
                               const DB::FileName& prevInfo, const DB::FileName& current, const DB::FileName& nextInfo );
+    bool generateJSDatabase(void);
     bool linkIndexFile();
     QString populateDescription( QList<DB::CategoryPtr> categories, const DB::ImageInfoPtr info );
 

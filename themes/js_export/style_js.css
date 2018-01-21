@@ -1,0 +1,91 @@
+body{
+  background-color:#444;
+  color:#FFF;
+  margin:0px;
+}
+a {
+  text-decoration:none;
+  color:#CCC;
+  font-weight:bold;
+}
+a:hover {
+  text-decoration:underline;
+  color:#FFF;
+  font-weight:bold;
+}
+#tags{
+  clear:left;
+  width:200px;
+  color:#FFF;
+  float:left;
+}
+#tags ul{
+  list-style-type:none;
+  margin-left:0px;
+  padding-left:0px;
+}
+
+#tags ul li ul li{
+  margin-top:2px;
+}
+
+#tags ul li{
+  margin-top:15px;
+}
+
+#photos a {
+  display:inline-block;
+  margin:5px;
+  text-align:center;
+}
+#photos a img{
+  box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.6);
+  vertical-align:middle;
+}
+#recherche{
+  width:100%;
+  height:50px;
+}
+#search{
+  border-bottom:1px #CCC solid;
+  background-color:#EEE;
+  color:black;
+}
+
+.currentSearchButton{
+  width:100%;
+}
+
+#search button{
+  border-radius:8px;
+  border-style:solid;
+
+  padding:1ex;
+  min-height:26px;
+/*  background-image:url("Photos/edit-delete.svg");*/
+  background-repeat:no-repeat;
+  text-decoration:none;
+  color:#FFF;
+  background-color:#333;
+  box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.6);
+  background-position:2px 2px;
+  margin-bottom:1ex;
+  margin-left:1ex;
+  margin-right:1ex;
+}
+#search button .value{
+  font-weight:bold;
+}
+#recherche a:hover{
+ background-color:#666;
+}
+#Navbar{
+  display:block;
+  text-align:center;
+  margin-left:200px;
+}
+
+#hideSearch{
+  position: absolute;
+  right: 0px;
+}
