@@ -3,12 +3,11 @@ install(
     close.png
     close.svg
     CMakeLists.txt
-    imagepage.html
     index.html
     kphotoalbum.theme
     lightFullscreenGallery.js
-    mainpage.html
     mustache.js
+    photos.js
     style_img.css
     style_js.css
     tagGallery.js

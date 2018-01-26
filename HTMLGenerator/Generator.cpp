@@ -86,6 +86,11 @@ void HTMLGenerator::Generator::generate()
             return;
         }
     }
+    
+    if ( m_setup.generateJSDatabase() ) {
+		qCDebug(HTMLGeneratorLog) << "Generating JS Database...";
+		generateJSDatabase();
+	}
 
     // prepare the progress dialog
     m_total = m_waitCounter = calculateSteps();
@@ -144,11 +149,13 @@ void HTMLGenerator::Generator::generate()
 
     if ( wasCanceled() )
         return;
-
-    qCDebug(HTMLGeneratorLog) << "Linking image file...";
-    bool ok = linkIndexFile();
-    if ( !ok )
-        return;
+    
+    if ( m_setup.generateHTMLIndexFile() ){
+		qCDebug(HTMLGeneratorLog) << "Linking image file...";
+		bool ok = linkIndexFile();
+		if ( !ok )
+			return;
+    }
 
     qCDebug(HTMLGeneratorLog) << "Copying theme files...";
     // Copy over the mainpage.css, imagepage.css
@@ -161,11 +168,12 @@ void HTMLGenerator::Generator::generate()
 
     for( QStringList::Iterator it = files.begin(); it != files.end(); ++it ) {
         if( *it == QString::fromLatin1("kphotoalbum.theme") ||
+            *it == QString::fromLatin1("photos.js") ||
             *it == QString::fromLatin1("mainpage.html") ||
             *it == QString::fromLatin1("imagepage.html")) continue;
         QString from = QString::fromLatin1("%1%2").arg( themeDir ).arg(*it);
         QString to = m_tempDir.filePath(*it);
-        ok = Utilities::copy( from, to );
+        bool ok = Utilities::copy( from, to );
         if ( !ok ) {
             KMessageBox::error( this, i18n("Error copying %1 to %2", from , to ) );
             return;
@@ -182,6 +190,8 @@ void HTMLGenerator::Generator::generate()
     m_eventLoop->exec();
     return;
 }
+
+
 
 bool HTMLGenerator::Generator::generateIndexPage( int width, int height )
 {
@@ -556,15 +566,18 @@ QString HTMLGenerator::Generator::nameImage( const DB::FileName& fileName, int s
     QString name = m_filenameMapper.uniqNameFor(fileName);
     QString base = QFileInfo( name ).completeBaseName();
     if ( size == maxImageSize() && !Utilities::isVideo( fileName ) ) {
-        if ( name.endsWith( QString::fromLatin1(".jpg"), Qt::CaseSensitive ) ||
+        /*if ( name.endsWith( QString::fromLatin1(".jpg"), Qt::CaseSensitive ) ||
                 name.endsWith( QString::fromLatin1(".jpeg"), Qt::CaseSensitive ) )
             return name;
-        else
-            return base + QString::fromLatin1(".jpg");
+        else 
+            return base + QString::fromLatin1(".jpg");*/
+        return name;
     } else if ( size == maxImageSize() && Utilities::isVideo( fileName ) ) {
         return name;
-    } else
+    } else {
+		// TODO : What if our image is not a JPEG ?
         return QString::fromLatin1( "%1-%2.jpg" ).arg( base ).arg( size );
+    }
 }
 
 QString HTMLGenerator::Generator::createImage( const DB::FileName& fileName, int size )
@@ -586,7 +599,88 @@ QString HTMLGenerator::Generator::createImage( const DB::FileName& fileName, int
 }
 
 bool HTMLGenerator::Generator::generateJSDatabase(){
-	return true;
+	QStringList ListCategory;
+	QString Images_data, Relations, Categories;
+	
+	QString themeDir, themeAuthor, themeName;
+    getThemeInfo( &themeDir, &themeName, &themeAuthor );
+    
+    //m_setup.imageList()
+    
+    // ----------------------------------------- GetData
+    for (const DB::FileName& fileName : m_setup.imageList()) {
+        const DB::ImageInfoPtr info = fileName.info();
+        if ( wasCanceled() )
+            return false;
+		// fileName.absolute()
+		
+		Images_data = Images_data + QString::fromLatin1("{\"file\":\"") + 
+			m_filenameMapper.uniqNameFor(fileName) + 
+			QString::fromLatin1("\"},\n");
+        
+        QStringList grps = info->availableCategories();
+        
+        
+		Q_FOREACH(const QString &name, grps ) {
+			Utilities::StringSet items = info->itemsOfCategory(name);
+			
+			Q_FOREACH( const QString &item, items ) {
+				//{"file":"new_wave_2.jpg","category":"Keywords","value":"new wave"},
+				Relations = Relations + QString::fromLatin1("{\"file\":\"") + 
+					m_filenameMapper.uniqNameFor(fileName) + 
+					QString::fromLatin1("\",\"category\":\"") + name +
+					QString::fromLatin1("\",\"value\":\"") + item +
+					QString::fromLatin1("\"},\n");
+				
+				// Build the list of category and value
+				QString category;
+
+				category = QString::fromLatin1("{\"category\":\"%1\",\"value\":\"%2\"},\n").arg(name,item);
+				bool found = false;
+				for(int i =0; i<ListCategory.size(); i++){
+					if(ListCategory[i] == category){
+						found = true;
+					}
+				}
+				if ( found == false){
+					ListCategory << category;
+					Categories = Categories + category;
+				}				
+			}
+		}
+    }
+    
+	Images_data = Images_data.left(Images_data.length() - 2);
+	Relations = Relations.left(Relations.length() - 2);
+	Categories = Categories.left(Categories.length() - 2);
+    
+    qCDebug(HTMLGeneratorLog).noquote() << Images_data.left(100);
+    qCDebug(HTMLGeneratorLog).noquote() << Relations.left(100);
+    qCDebug(HTMLGeneratorLog).noquote() << Categories.left(100);
+    
+    // --------------------------------------------- read template file
+    qCDebug(HTMLGeneratorLog) << QString::fromLatin1( "%1photos.js" ).arg( themeDir );
+    QString content = Utilities::readFile( QString::fromLatin1( "%1photos.js" ).arg( themeDir ));
+    if ( content.isEmpty() ){
+		qCDebug(HTMLGeneratorLog) << "Can't read template file";
+        return false;
+    }
+    // ----------------------------------- replace with computed values
+    content = content.replace( QString::fromLatin1( "**CATEGORIES**" ), Categories );
+    content = content.replace( QString::fromLatin1( "**RELATIONS**" ), Relations );
+    content = content.replace( QString::fromLatin1( "**IMAGES_DATA**" ), Images_data );
+    
+    // -------------------------------------------------- write to file
+    QString fileName = m_tempDir.filePath(
+                QString::fromLatin1("photos.js" )
+                );
+    qCDebug(HTMLGeneratorLog) << QString::fromLatin1("File: ") + fileName;
+    qCDebug(HTMLGeneratorLog) << content;
+    bool ok = writeToFile( fileName, content );
+    if (!ok)
+		qCDebug(HTMLGeneratorLog) << "Can't write JS database";
+	qCDebug(HTMLGeneratorLog) << "OK : JS database";
+	return ok;
 }
 
 QString HTMLGenerator::Generator::createVideo( const DB::FileName& fileName )
