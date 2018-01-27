@@ -37,7 +37,7 @@ var photos_tpl = `
     <div>
     {{#selectedPhotos}}
       <!-- BEGIN photos -->
-      <a href="Photos/{{file}}" rel="lightbox[photos]" data-lightbox="mainGallery"><img src="Photos/mini/{{file}}"/></a>
+      <a href="{{file}}" rel="lightbox[photos]" data-lightbox="mainGallery"><img src="{{thumbFile}}"/></a>
       <!-- END photos -->
     {{/selectedPhotos}}
     {{#more}}

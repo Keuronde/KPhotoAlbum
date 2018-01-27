@@ -566,6 +566,8 @@ QString HTMLGenerator::Generator::nameImage( const DB::FileName& fileName, int s
     QString name = m_filenameMapper.uniqNameFor(fileName);
     QString base = QFileInfo( name ).completeBaseName();
     if ( size == maxImageSize() && !Utilities::isVideo( fileName ) ) {
+		// This code change the extension of the max size image. Why ?
+		// ==> Probably because the name of the thumbnail is modified somewhere, but where ? Why ?
         /*if ( name.endsWith( QString::fromLatin1(".jpg"), Qt::CaseSensitive ) ||
                 name.endsWith( QString::fromLatin1(".jpeg"), Qt::CaseSensitive ) )
             return name;

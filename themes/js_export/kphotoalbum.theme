@@ -3,3 +3,5 @@ Name=Dynamic JS
 Author=Samuel Kay
 Description=Dakr, browsable by tags
 NeedJSDatabase=Yes
+NeedHTMLIndexFile=No
+NeedHTMLImageFile=No

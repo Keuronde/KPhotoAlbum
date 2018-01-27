@@ -2,3 +2,6 @@
 Name=KPhotoAlbum Grey
 Author=Nick Ryan
 Description=Clean theme with square boxes and two shades of dark grey which keeps the emphasis on your pictures.
+NeedHTMLIndexFile=Yes
+NeedHTMLImageFile=Yes
+NeedJSDatabase=No
