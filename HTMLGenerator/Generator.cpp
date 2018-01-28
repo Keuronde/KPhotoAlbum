@@ -568,11 +568,11 @@ QString HTMLGenerator::Generator::nameImage( const DB::FileName& fileName, int s
     if ( size == maxImageSize() && !Utilities::isVideo( fileName ) ) {
 		// This code change the extension of the max size image. Why ?
 		// ==> Probably because the name of the thumbnail is modified somewhere, but where ? Why ?
-        /*if ( name.endsWith( QString::fromLatin1(".jpg"), Qt::CaseSensitive ) ||
+        if ( name.endsWith( QString::fromLatin1(".jpg"), Qt::CaseSensitive ) ||
                 name.endsWith( QString::fromLatin1(".jpeg"), Qt::CaseSensitive ) )
             return name;
         else 
-            return base + QString::fromLatin1(".jpg");*/
+            return base + QString::fromLatin1(".jpg");
         return name;
     } else if ( size == maxImageSize() && Utilities::isVideo( fileName ) ) {
         return name;
@@ -617,7 +617,7 @@ bool HTMLGenerator::Generator::generateJSDatabase(){
 		// fileName.absolute()
 		
 		Images_data = Images_data + QString::fromLatin1("{\"file\":\"") + 
-			m_filenameMapper.uniqNameFor(fileName) + 
+			nameImage( fileName, maxImageSize()) + 
 			QString::fromLatin1("\"},\n");
         
         QStringList grps = info->availableCategories();
@@ -629,7 +629,7 @@ bool HTMLGenerator::Generator::generateJSDatabase(){
 			Q_FOREACH( const QString &item, items ) {
 				//{"file":"new_wave_2.jpg","category":"Keywords","value":"new wave"},
 				Relations = Relations + QString::fromLatin1("{\"file\":\"") + 
-					m_filenameMapper.uniqNameFor(fileName) + 
+					nameImage( fileName, maxImageSize()) + 
 					QString::fromLatin1("\",\"category\":\"") + name +
 					QString::fromLatin1("\",\"value\":\"") + item +
 					QString::fromLatin1("\"},\n");

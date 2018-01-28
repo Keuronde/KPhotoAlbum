@@ -288,17 +288,19 @@ function tg_getPhotos(photosDatabase){
   selectedPhotosForPage = selectedPhotos.slice(0,nbPhotosToDisplay);
   config = tg_getConfig();
 
+	
 	// Build name of the thumbnail file
 	// "PHOTO.JPG" ==> "PHOTO-128.JPG"
 	for(var i=0; i<selectedPhotosForPage.length ; i++){
-			fileSplit = selectedPhotosForPage[i].file.split(".");
-			thumbFile = "";
-			for (var j=0; j<fileSplit.length-1; j++){
-				thumbFile = thumbFile + fileSplit[j];
+			var fileSplit = selectedPhotosForPage[i].file.split(".");
+			var thumbFile = fileSplit[0];
+			for (var j=1; j<fileSplit.length-1; j++){
+				thumbFile = thumbFile + "." + fileSplit[j];
 			}
-			thumbFile = thumbFile + "-" + config.config.ThumbSize + ".jpg";
+			thumbFile = thumbFile + "-" + config.config.ThumbSize + "." + fileSplit[fileSplit.length-1];
 			selectedPhotosForPage[i].thumbFile = thumbFile;
 	}
+
 	return selectedPhotosForPage;
 
 }
