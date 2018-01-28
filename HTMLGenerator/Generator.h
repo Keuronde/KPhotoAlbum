@@ -63,7 +63,7 @@ public:
     QString createVideo( const DB::FileName& fileName );
 
     QString kimFileName( bool relative );
-    bool writeToFile( const QString& fileName, const QString& str );
+    bool writeToFile( const QString& fileName, const QString& str, bool toHTML=true );
     QString translateToHTML( const QString& );
     int calculateSteps();
     void getThemeInfo( QString* baseDir, QString* name, QString* author );

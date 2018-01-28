@@ -636,18 +636,21 @@ bool HTMLGenerator::Generator::generateJSDatabase(){
 				
 				// Build the list of category and value
 				QString category;
+				if(m_setup.includeCategory(name)){
+					// If the category has been selected by the user
 
-				category = QString::fromLatin1("{\"category\":\"%1\",\"value\":\"%2\"},\n").arg(name,item);
-				bool found = false;
-				for(int i =0; i<ListCategory.size(); i++){
-					if(ListCategory[i] == category){
-						found = true;
+					category = QString::fromLatin1("{\"category\":\"%1\",\"value\":\"%2\"},\n").arg(name,item);
+					bool found = false;
+					for(int i =0; i<ListCategory.size(); i++){
+						if(ListCategory[i] == category){
+							found = true;
+						}
 					}
-				}
-				if ( found == false){
-					ListCategory << category;
-					Categories = Categories + category;
-				}				
+					if ( found == false){
+						ListCategory << category;
+						Categories = Categories + category;
+					}		
+				}		
 			}
 		}
     }
@@ -682,7 +685,7 @@ bool HTMLGenerator::Generator::generateJSDatabase(){
                 );
     qCDebug(HTMLGeneratorLog) << QString::fromLatin1("File: ") + fileName;
     qCDebug(HTMLGeneratorLog) << content;
-    bool ok = writeToFile( fileName, content );
+    bool ok = writeToFile( fileName, content, false );
     if (!ok)
 		qCDebug(HTMLGeneratorLog) << "Can't write JS database";
 	qCDebug(HTMLGeneratorLog) << "OK : JS database";
@@ -724,7 +727,7 @@ QString HTMLGenerator::Generator::kimFileName( bool relative )
         return m_tempDir.filePath( QString::fromLatin1("%2.kim").arg( m_setup.outputDir()));
 }
 
-bool HTMLGenerator::Generator::writeToFile( const QString& fileName, const QString& str )
+bool HTMLGenerator::Generator::writeToFile( const QString& fileName, const QString& str, bool toHTML)
 {
     QFile file(fileName);
     if ( !file.open(QIODevice::WriteOnly) ) {
@@ -732,8 +735,11 @@ bool HTMLGenerator::Generator::writeToFile( const QString& fileName, const QStri
                             i18n("Could Not Create File") );
         return false;
     }
-
-    QByteArray data = translateToHTML(str).toUtf8();
+    QByteArray data;
+	if (toHTML)
+		data = translateToHTML(str).toUtf8();
+	else
+		data = str.toUtf8();
     file.write( data );
     file.close();
     return true;
