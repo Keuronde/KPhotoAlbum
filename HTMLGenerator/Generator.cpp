@@ -660,6 +660,9 @@ bool HTMLGenerator::Generator::generateJSDatabase(){
     qCDebug(HTMLGeneratorLog).noquote() << Relations.left(100);
     qCDebug(HTMLGeneratorLog).noquote() << Categories.left(100);
     
+    // --------------------------------------------------- build config
+    QString JSConfig = QString::fromLatin1("{\"ThumbSize\":%1}").arg(m_setup.thumbSize());
+    
     // --------------------------------------------- read template file
     qCDebug(HTMLGeneratorLog) << QString::fromLatin1( "%1photos.js" ).arg( themeDir );
     QString content = Utilities::readFile( QString::fromLatin1( "%1photos.js" ).arg( themeDir ));
@@ -671,6 +674,7 @@ bool HTMLGenerator::Generator::generateJSDatabase(){
     content = content.replace( QString::fromLatin1( "**CATEGORIES**" ), Categories );
     content = content.replace( QString::fromLatin1( "**RELATIONS**" ), Relations );
     content = content.replace( QString::fromLatin1( "**IMAGES_DATA**" ), Images_data );
+    content = content.replace( QString::fromLatin1( "**CONFIG**" ), JSConfig );
     
     // -------------------------------------------------- write to file
     QString fileName = m_tempDir.filePath(

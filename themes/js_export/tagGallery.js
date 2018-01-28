@@ -167,7 +167,7 @@ function tg_addCriteria(myCrit){
 }
 
 function tg_getConfig(){
-	config = {"ThumbSize":128};
+	config = photosDatabaseConfig;
 	return config;
 }
 
@@ -296,7 +296,7 @@ function tg_getPhotos(photosDatabase){
 			for (var j=0; j<fileSplit.length-1; j++){
 				thumbFile = thumbFile + fileSplit[j];
 			}
-			thumbFile = thumbFile + "-" + config.ThumbSize + ".jpg";
+			thumbFile = thumbFile + "-" + config.config.ThumbSize + ".jpg";
 			selectedPhotosForPage[i].thumbFile = thumbFile;
 	}
 	return selectedPhotosForPage;

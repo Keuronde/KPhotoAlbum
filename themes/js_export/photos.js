@@ -13,4 +13,10 @@ var photosDatabase =
 	[ 
 		**RELATIONS**
 	]
- }
+ };
+
+var photosDatabaseConfig = 
+{
+	"config": **CONFIG**
+	
+}
