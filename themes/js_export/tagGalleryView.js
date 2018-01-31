@@ -7,10 +7,10 @@ var search_tpl = `
     <div>
     <p style="display:inline-block;">{{category}}</p>
     {{^onlyone}}
-    <button type="button" category="{{category}}" boolOp="{{boolOp}}" onclick="toggleBoolOp(this)">{{boolOp}}</button>
+    <button type="button" name="{{category}}" boolOp="{{boolOp}}" onclick="toggleBoolOp(this)">{{boolOp}}</button>
     {{/onlyone}}
     {{#values}}
-    <button type="button" category="{{category}}" value="{{.}}" onclick="delCriteria(this)">{{category}} : <span style="value">{{.}}</button>
+    <button type="button" name="{{category}}" value="{{.}}" onclick="delCriteria(this)">{{category}} : <span style="value">{{.}}</button>
     {{/values}}
     </div>
 	{{/currentSearch}}
@@ -24,7 +24,7 @@ var tags_tpl = `
       <ul class="value">
         <!-- BEGIN values -->
         {{#values}}
-        <li><button type="button" category="{{name}}" value="{{.}}" onclick="addCriteria(this)" class="currentSearchButton">{{.}}</button></li>
+        <li><button type="button" name="{{name}}" value="{{.}}" onclick="addCriteria(this)" class="currentSearchButton">{{.}}</button></li>
         {{/values}}
         <!-- END values -->
       </ul>
@@ -37,7 +37,7 @@ var photos_tpl = `
     <div>
     {{#selectedPhotos}}
       <!-- BEGIN photos -->
-      <a href="{{file}}" rel="lightbox[photos]" data-lightbox="mainGallery"><img src="{{thumbFile}}"/></a>
+      <a href="{{file}}" data-gallery="mainGallery"><img alt="Photo" src="{{thumbFile}}"/></a>
       <!-- END photos -->
     {{/selectedPhotos}}
     {{#more}}
@@ -51,16 +51,16 @@ var photos_tpl = `
 
 
 function addCriteria(theButton){
-  tg_addCriteria({"category":theButton.getAttribute("category"),"value":theButton.getAttribute("value")});
+  tg_addCriteria({"category":theButton.getAttribute("name"),"value":theButton.getAttribute("value")});
   refresh();
 }
 
 function delCriteria(theButton){
-  tg_delCriteria({"category":theButton.getAttribute("category"),"value":theButton.getAttribute("value")});
+  tg_delCriteria({"category":theButton.getAttribute("name"),"value":theButton.getAttribute("value")});
   refresh();
 }
 function toggleBoolOp(theButton){
-  tg_toggleBoolOp({"category":theButton.getAttribute("category"),"boolOp":theButton.getAttribute("boolOp")});
+  tg_toggleBoolOp({"category":theButton.getAttribute("name"),"boolOp":theButton.getAttribute("boolOp")});
   refresh();
 }
 function hideSearch(){

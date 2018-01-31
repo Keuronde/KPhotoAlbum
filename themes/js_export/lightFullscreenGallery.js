@@ -12,7 +12,7 @@ imageshow_tpl=`
 `
 
 function lfg_init(){
-	links = [].slice.call(document.querySelectorAll("[rel^=lightbox]"));
+	links = [].slice.call(document.querySelectorAll("[data-gallery^=mainGallery]"));
 	links.forEach(
 	function(element){
 		element.addEventListener("click", lfg_start, false);
@@ -29,8 +29,8 @@ function lfg_start(event){
 	console.log(scrollPosition)
 	
 	// find all images in the gallery
-	var galleryName = this.getAttribute("data-lightbox");
-	galleryNode = [].slice.call(document.querySelectorAll("[data-lightbox^="+galleryName+"]"));
+	var galleryName = this.getAttribute("data-gallery");
+	galleryNode = [].slice.call(document.querySelectorAll("[data-gallery^="+galleryName+"]"));
 	gallery=[];
 	imagePositionInGallery=0;
 	imageHref = this.getAttribute('href');
