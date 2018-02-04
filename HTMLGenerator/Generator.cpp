@@ -664,7 +664,14 @@ bool HTMLGenerator::Generator::generateJSDatabase(){
     qCDebug(HTMLGeneratorLog).noquote() << Categories.left(100);
     
     // --------------------------------------------------- build config
-    QString JSConfig = QString::fromLatin1("{\"ThumbSize\":%1}").arg(m_setup.thumbSize());
+    
+    QString description = m_setup.description().replace(QString::fromLatin1("\\"),QString::fromLatin1("\\\\"));
+    description = description.replace(QString::fromLatin1("\""),QString::fromLatin1("\\\""));
+    QString title = m_setup.title().replace(QString::fromLatin1("\\"),QString::fromLatin1("\\\\"));
+    title = title.replace(QString::fromLatin1("\""),QString::fromLatin1("\\\""));
+    
+    QString JSConfig = QString::fromLatin1("{\"ThumbSize\":%1,\"title\":\"%2\",\"description\":\"%3\"}").arg(m_setup.thumbSize()).arg(
+			title, description);
     
     // --------------------------------------------- read template file
     qCDebug(HTMLGeneratorLog) << QString::fromLatin1( "%1photos.js" ).arg( themeDir );

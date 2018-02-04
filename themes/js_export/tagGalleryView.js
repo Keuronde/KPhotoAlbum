@@ -46,7 +46,14 @@ var photos_tpl = `
     </div>
 `;
 
-
+function init(){
+	// Set title an description
+	config = tg_getConfig()
+	document.getElementById('KPA_TITLE').innerHTML = config.config.title
+	document.title = config.config.title
+	document.getElementById('KPA_DESCRIPTION').innerHTML = config.config.description
+	refresh();
+}
 
 
 
