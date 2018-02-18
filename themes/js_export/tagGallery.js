@@ -100,12 +100,12 @@ function tg_getCriteriaToRenderSearchPanel(){
 }
 
 function tg_getMorePhotos(){
-	nbPhotosToDisplay= nbPhotosToDisplay + nbMorePhotos;
+    nbPhotosToDisplay= nbPhotosToDisplay + nbMorePhotos;
 }
 
 function tg_AreAllPhotosDisplayed(){
-	console.log("nbPhotosToDisplay : " + nbPhotosToDisplay + ", selectedPhotos.length : " + selectedPhotos.length);
-	return (nbPhotosToDisplay >= selectedPhotos.length);
+    console.log("nbPhotosToDisplay : " + nbPhotosToDisplay + ", selectedPhotos.length : " + selectedPhotos.length);
+    return (nbPhotosToDisplay >= selectedPhotos.length);
 }
 
 
@@ -121,15 +121,15 @@ function tg_delCriteria(myCrit){
     if(criteria.currentSearch[cat].category == myCrit.category){
       // Category found
       // If the category is found, remove the value
-     	myIndex = criteria.currentSearch[cat].values.indexOf(myCrit.value);
-   	  criteria.currentSearch[cat].values.splice(myIndex,1);
-     	  
-   	  // If there are no more values, remove the category
-   	  if(criteria.currentSearch[cat].values.length == 0){
-   	    criteria.currentSearch.splice(cat,1);
-   	  }
-   	  // No need to continue the for loop
-     	break;
+         myIndex = criteria.currentSearch[cat].values.indexOf(myCrit.value);
+         criteria.currentSearch[cat].values.splice(myIndex,1);
+           
+         // If there are no more values, remove the category
+         if(criteria.currentSearch[cat].values.length == 0){
+           criteria.currentSearch.splice(cat,1);
+         }
+         // No need to continue the for loop
+         break;
     }
   }
 
@@ -167,8 +167,8 @@ function tg_addCriteria(myCrit){
 }
 
 function tg_getConfig(){
-	config = photosDatabaseConfig;
-	return config;
+    config = photosDatabaseConfig;
+    return config;
 }
 
 function tg_getTags(photosDatabase, tagFamily){
@@ -201,70 +201,70 @@ function tg_getTagFamilies(photosDatabase){
 }
 
 function computePhotos(photosDatabase){
-		var i;
-		var cat;
-		var val;
-	  selectedPhotos=[]
+        var i;
+        var cat;
+        var val;
+      selectedPhotos=[]
 
-		
-		
-		if (criteria.currentSearch.length == 0){
-		  for (i=0; i<photosDatabase.Images_data.length; i++){
-		    selectedPhotos.push({"file":photosDatabase.Images_data[i].file});
-		  }
-		  return selectedPhotos;
-		}
-		var first=true;
+        
+        
+        if (criteria.currentSearch.length == 0){
+          for (i=0; i<photosDatabase.Images_data.length; i++){
+            selectedPhotos.push({"file":photosDatabase.Images_data[i].file});
+          }
+          return selectedPhotos;
+        }
+        var first=true;
 
-		for (cat=0; cat<criteria.currentSearch.length; cat++){
-		  // for each given categories, find corresponding photos
-		  var photosForThisCategory=[];
-		  var firstValue=true;
-		  for(val=0; val<criteria.currentSearch[cat].values.length; val++){
-		    var photosForThisValue=[];
-		    
-		    for(i=0; i<photosDatabase.Relations.length; i++){
-		      
-		      if(photosDatabase.Relations[i].category == criteria.currentSearch[cat].category &&
-		         photosDatabase.Relations[i].value == criteria.currentSearch[cat].values[val]){
-		        
-		        photosForThisValue.push({"file":photosDatabase.Relations[i].file});
-		      }
-		    } // FOR Relations
-		    
-		    if(criteria.currentSearch[cat].boolOp == "AND"){
-		      // AND logic
+        for (cat=0; cat<criteria.currentSearch.length; cat++){
+          // for each given categories, find corresponding photos
+          var photosForThisCategory=[];
+          var firstValue=true;
+          for(val=0; val<criteria.currentSearch[cat].values.length; val++){
+            var photosForThisValue=[];
+            
+            for(i=0; i<photosDatabase.Relations.length; i++){
+              
+              if(photosDatabase.Relations[i].category == criteria.currentSearch[cat].category &&
+                 photosDatabase.Relations[i].value == criteria.currentSearch[cat].values[val]){
+                
+                photosForThisValue.push({"file":photosDatabase.Relations[i].file});
+              }
+            } // FOR Relations
+            
+            if(criteria.currentSearch[cat].boolOp == "AND"){
+              // AND logic
 
-		      if(firstValue == true){
-		        photosForThisCategory = photosForThisValue;
-		        firstValue = false;
-		      }else{
-		        photosForThisCategory = intersect_photos(photosForThisCategory, photosForThisValue);
-		      }
-		    }else{
-		      // OR logic
-		      if(firstValue == true){
-		        photosForThisCategory = photosForThisValue;
-		        firstValue = false;
-		      }else{
-		        photosForThisCategory = uniqueObjectInArray(photosForThisCategory.concat(photosForThisValue),"file");
-		      }
-		    }
+              if(firstValue == true){
+                photosForThisCategory = photosForThisValue;
+                firstValue = false;
+              }else{
+                photosForThisCategory = intersect_photos(photosForThisCategory, photosForThisValue);
+              }
+            }else{
+              // OR logic
+              if(firstValue == true){
+                photosForThisCategory = photosForThisValue;
+                firstValue = false;
+              }else{
+                photosForThisCategory = uniqueObjectInArray(photosForThisCategory.concat(photosForThisValue),"file");
+              }
+            }
 
-		  } // FOR values
+          } // FOR values
 
 
-		  // then get the intersection of each result
-		  if (first == true){
-		    selectedPhotos = photosForThisCategory;
-		    first=false;
-		  }else{
-		    selectedPhotos = intersect_photos(selectedPhotos, photosForThisCategory);
-		  }
-		  
-		} // FOR Category
-		
-		return selectedPhotos;
+          // then get the intersection of each result
+          if (first == true){
+            selectedPhotos = photosForThisCategory;
+            first=false;
+          }else{
+            selectedPhotos = intersect_photos(selectedPhotos, photosForThisCategory);
+          }
+          
+        } // FOR Category
+        
+        return selectedPhotos;
 }
 
 
@@ -276,31 +276,31 @@ function tg_getPhotos(photosDatabase){
   * criteria: array of contidions like this [{"category":"cat1","value":"val1"}, {"category":"cat2","value":"val2"}]
   */
   if(photosUptoDate == false){
-	  photosUptoDate = true;
-	  console.log(nbPhotosToDisplay);
-	  selectedPhotos = computePhotos(photosDatabase);
+      photosUptoDate = true;
+      console.log(nbPhotosToDisplay);
+      selectedPhotos = computePhotos(photosDatabase);
 
-	  // Reset the number of displayed photos
-	  nbPhotosToDisplay=nbMorePhotos;
-	  
-	  
+      // Reset the number of displayed photos
+      nbPhotosToDisplay=nbMorePhotos;
+      
+      
   }
   selectedPhotosForPage = selectedPhotos.slice(0,nbPhotosToDisplay);
   config = tg_getConfig();
 
-	
-	// Build name of the thumbnail file
-	// "PHOTO.JPG" ==> "PHOTO-128.JPG"
-	for(var i=0; i<selectedPhotosForPage.length ; i++){
-			var fileSplit = selectedPhotosForPage[i].file.split(".");
-			var thumbFile = fileSplit[0];
-			for (var j=1; j<fileSplit.length-1; j++){
-				thumbFile = thumbFile + "." + fileSplit[j];
-			}
-			thumbFile = thumbFile + "-" + config.config.ThumbSize + "." + fileSplit[fileSplit.length-1];
-			selectedPhotosForPage[i].thumbFile = thumbFile;
-	}
+    
+    // Build name of the thumbnail file
+    // "PHOTO.JPG" ==> "PHOTO-128.JPG"
+    for(var i=0; i<selectedPhotosForPage.length ; i++){
+            var fileSplit = selectedPhotosForPage[i].file.split(".");
+            var thumbFile = fileSplit[0];
+            for (var j=1; j<fileSplit.length-1; j++){
+                thumbFile = thumbFile + "." + fileSplit[j];
+            }
+            thumbFile = thumbFile + "-" + config.config.ThumbSize + "." + fileSplit[fileSplit.length-1];
+            selectedPhotosForPage[i].thumbFile = thumbFile;
+    }
 
-	return selectedPhotosForPage;
+    return selectedPhotosForPage;
 
 }

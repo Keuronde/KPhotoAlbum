@@ -3,7 +3,7 @@ var search_tpl = `
     <button style:"float:right" onclick="hideSearch()" id="hideSearch">Hide current search</button>
     <div id="hidableSearch">
     <!-- BEGIN recherche -->
-	{{#currentSearch}}
+    {{#currentSearch}}
     <div>
     <p style="display:inline-block;">{{category}}</p>
     {{^onlyone}}
@@ -13,7 +13,7 @@ var search_tpl = `
     <button type="button" category="{{category}}" value="{{.}}" onclick="delCriteria(this)">{{category}} : <span style="value">{{.}}</button>
     {{/values}}
     </div>
-	{{/currentSearch}}
+    {{/currentSearch}}
     <!-- END recherche -->
     <button style:"float:left" onclick="reset()">Reset</button></div>
 `;
@@ -74,7 +74,7 @@ function hideSearch(){
 }
 function more(){
     tg_getMorePhotos();
-	refresh();
+    refresh();
 }
 
 function reset()
@@ -136,7 +136,7 @@ function refresh(){
   
   if(!tg_AreAllPhotosDisplayed()){
     if(  window.onscroll === null){
-      	window.onscroll = function() {myScroll()};
+          window.onscroll = function() {myScroll()};
     }
   }else{
     window.onscroll = null;
