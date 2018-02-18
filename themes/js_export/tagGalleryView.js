@@ -3,7 +3,7 @@ var search_tpl = `
     <button style:"float:right" onclick="hideSearch()" id="hideSearch">Hide current search</button>
     <div id="hidableSearch">
     <!-- BEGIN recherche -->
-	{{#currentSearch}}
+    {{#currentSearch}}
     <div>
     <p style="display:inline-block;">{{category}}</p>
     {{^onlyone}}
@@ -13,7 +13,7 @@ var search_tpl = `
     <button type="button" name="{{category}}" value="{{.}}" onclick="delCriteria(this)">{{category}} : <span style="value">{{.}}</button>
     {{/values}}
     </div>
-	{{/currentSearch}}
+    {{/currentSearch}}
     <!-- END recherche -->
     <button style:"float:left" onclick="reset()">Reset</button></div>
 `;
@@ -37,7 +37,7 @@ var photos_tpl = `
     <div>
     {{#selectedPhotos}}
       <!-- BEGIN photos -->
-      <a href="{{file}}" data-gallery="mainGallery"><img alt="Photo" src="{{thumbFile}}"/></a>
+      <a href="media/{{file}}" data-gallery="mainGallery"><img alt="Photo" src="{{thumbFile}}"/></a>
       <!-- END photos -->
     {{/selectedPhotos}}
     {{#more}}
@@ -47,12 +47,12 @@ var photos_tpl = `
 `;
 
 function init(){
-	// Set title an description
-	config = tg_getConfig()
-	document.getElementById('KPA_TITLE').innerHTML = config.config.title
-	document.title = config.config.title
-	document.getElementById('KPA_DESCRIPTION').innerHTML = config.config.description
-	refresh();
+    // Set title an description
+    config = tg_getConfig()
+    document.getElementById('KPA_TITLE').innerHTML = config.config.title
+    document.title = config.config.title
+    document.getElementById('KPA_DESCRIPTION').innerHTML = config.config.description
+    refresh();
 }
 
 
@@ -81,7 +81,7 @@ function hideSearch(){
 }
 function more(){
     tg_getMorePhotos();
-	refresh();
+    refresh();
 }
 
 function reset()
@@ -143,7 +143,7 @@ function refresh(){
   
   if(!tg_AreAllPhotosDisplayed()){
     if(  window.onscroll === null){
-      	window.onscroll = function() {myScroll()};
+          window.onscroll = function() {myScroll()};
     }
   }else{
     window.onscroll = null;
