@@ -542,13 +542,10 @@ void HTMLDialog::populateThemesCombo()
 
             // Get data describing the gallery generation.
             // TODO : use boolean instead of String
-            QString generateHTMLIndexFile = config.readEntry( "NeedHTMLIndexFile" );
-            m_generateHTMLIndexFile << generateHTMLIndexFile;
-            QString generateHTMLImageFile = config.readEntry( "NeedHTMLImageFile" );
-            m_generateHTMLImageFile << generateHTMLImageFile;
-            QString generateJSDatabase = config.readEntry( "NeedJSDatabase" );
-            m_generateJSDatabase << generateJSDatabase;
-
+            m_generateHTMLIndexFile.insert( i, config.readEntry( "NeedHTMLIndexFile" ) == QString::fromLatin1("true") );
+            m_generateHTMLImageFile.insert( i, config.readEntry( "NeedHTMLImageFile" ) == QString::fromLatin1("true") );
+            m_generateJSDatabase.insert( i, config.readEntry( "NeedJSDatabase" ) == QString::fromLatin1("true") );
+            
             //m_themeBox->insertItem( i, i18n( "%1 (by %2)",themeName, themeAuthor ) ); // combined alternative
             m_themeBox->insertItem( i, i18n( "%1",themeName) );
             m_themes.insert( i, themePath );
@@ -655,9 +652,9 @@ Setup HTMLGenerator::HTMLDialog::setup() const
     setup.setHtml5Video( m_html5Video->isChecked() );
     setup.setHtml5VideoGenerate( m_html5VideoGenerate->isChecked() );
     //TODO : Use boolean !
-    setup.setGenerateHTMLIndexFile( m_generateHTMLIndexFile[m_themeBox->currentIndex()].compare(QString::fromLatin1("Yes")) == 0 );
-    setup.setGenerateHTMLIndexFile( m_generateHTMLIndexFile[m_themeBox->currentIndex()].compare(QString::fromLatin1("Yes")) == 0 );
-    setup.setGenerateJSDatabase( m_generateJSDatabase[m_themeBox->currentIndex()].compare(QString::fromLatin1("Yes")) == 0);
+    setup.setGenerateHTMLIndexFile( m_generateHTMLIndexFile[m_themeBox->currentIndex()] );
+    setup.setGenerateHTMLImageFile( m_generateHTMLImageFile[m_themeBox->currentIndex()] );
+    setup.setGenerateJSDatabase( m_generateJSDatabase[m_themeBox->currentIndex()]);
 
     return setup;
 }

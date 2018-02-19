@@ -215,7 +215,8 @@ void HTMLGenerator::Setup::setGenerateHTMLIndexFile( bool generateHTMLIndexFile 
 
 bool HTMLGenerator::Setup::generateHTMLIndexFile() const
 {
-    return m_generateHTMLIndexFile;
+    //return m_generateHTMLIndexFile;
+    return false;
 
 }
 
@@ -226,7 +227,8 @@ void HTMLGenerator::Setup::setGenerateHTMLImageFile( bool generateHTMLImageFile 
 
 bool HTMLGenerator::Setup::generateHTMLImageFile() const
 {
-    return m_generateHTMLImageFile;
+    //return m_generateHTMLImageFile;
+    return false;
 
 }
 
@@ -238,7 +240,8 @@ void HTMLGenerator::Setup::setGenerateJSDatabase( bool generateJSDatabase )
 
 bool HTMLGenerator::Setup::generateJSDatabase() const
 {
-    return m_generateJSDatabase;
+    //return m_generateJSDatabase;
+    return true;
 
 }
 // vi:expandtab:tabstop=4 shiftwidth=4:

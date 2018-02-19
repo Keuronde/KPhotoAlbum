@@ -2,6 +2,6 @@
 Name=KPhotoAlbum Blue
 Author=Teemu Rytilahti
 Description=Straight lines, square boxes and two fresh crisp shades of blue.
-NeedHTMLIndexFile=Yes
-NeedHTMLImageFile=Yes
-NeedJSDatabase=No
+NeedHTMLIndexFile=true
+NeedHTMLImageFile=true
+NeedJSDatabase=false

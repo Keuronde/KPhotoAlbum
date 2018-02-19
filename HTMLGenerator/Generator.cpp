@@ -111,23 +111,24 @@ void HTMLGenerator::Generator::generate()
             if ( !ok )
                 return;
         }
-        // Do we need to generate HTML image files ?
-        if(m_setup.generateHTMLImageFile()){
-            const DB::FileNameList imageList = m_setup.imageList();
-            for (int index = 0; index < imageList.size(); ++index) {
-                DB::FileName current = imageList.at(index);
-                DB::FileName prev;
-                DB::FileName next;
-                if ( index != 0 )
-                    prev = imageList.at(index - 1);
-                if (index != imageList.size() - 1)
-                    next = imageList.at(index + 1);
-                bool ok = generateContentPage( (*sizeIt)->width(), (*sizeIt)->height(),
-                                          prev, current, next );
-                if (!ok)
-                    return;
-            }
+        
+        // Generating content page 
+        // Also generating the small images
+        const DB::FileNameList imageList = m_setup.imageList();
+        for (int index = 0; index < imageList.size(); ++index) {
+            DB::FileName current = imageList.at(index);
+            DB::FileName prev;
+            DB::FileName next;
+            if ( index != 0 )
+                prev = imageList.at(index - 1);
+            if (index != imageList.size() - 1)
+                next = imageList.at(index + 1);
+            bool ok = generateContentPage( (*sizeIt)->width(), (*sizeIt)->height(),
+                                      prev, current, next );
+            if (!ok)
+                return;
         }
+
     }
 
     // Now generate the thumbnail images
@@ -546,10 +547,12 @@ bool HTMLGenerator::Generator::generateContentPage( int width, int height,
         content.replace( QString::fromLatin1( "**DESCRIPTION**" ), QString::fromLatin1( "" ) );
 
     // -------------------------------------------------- write to file
-    QString fileName = m_tempDir.filePath(namePage( width, height, currentFile ));
-    bool ok = writeToFile( fileName, content );
-    if ( !ok )
-        return false;
+    if(m_setup.generateHTMLImageFile()){
+        QString fileName = m_tempDir.filePath(namePage( width, height, currentFile ));
+        bool ok = writeToFile( fileName, content );
+        if ( !ok )
+            return false;
+    }
 
     return true;
 }
