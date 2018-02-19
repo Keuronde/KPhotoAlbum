@@ -12,6 +12,7 @@ install(
     style_js.css
     tagGallery.js
     tagGalleryView.js
+    LICENCE
     DESTINATION ${KDE_INSTALL_DATADIR}/kphotoalbum/themes/js_export
     )
 
