@@ -86,7 +86,6 @@ private:
     QLabel* m_themeInfo;
     QStringList m_themeAuthors;
     QStringList m_themeDescriptions;
-    // TODO : use boolean instead of String
     QMap<int,bool> m_generateHTMLIndexFile;
     QMap<int,bool> m_generateHTMLImageFile;
     QMap<int,bool> m_generateJSDatabase;

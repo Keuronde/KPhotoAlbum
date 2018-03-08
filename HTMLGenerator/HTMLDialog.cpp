@@ -541,7 +541,6 @@ void HTMLDialog::populateThemesCombo()
             m_themeDescriptions << themeDescription; // save description to display later
 
             // Get data describing the gallery generation.
-            // TODO : use boolean instead of String
             m_generateHTMLIndexFile.insert( i, config.readEntry( "NeedHTMLIndexFile" ) == QString::fromLatin1("true") );
             m_generateHTMLImageFile.insert( i, config.readEntry( "NeedHTMLImageFile" ) == QString::fromLatin1("true") );
             m_generateJSDatabase.insert( i, config.readEntry( "NeedJSDatabase" ) == QString::fromLatin1("true") );
@@ -651,7 +650,6 @@ Setup HTMLGenerator::HTMLDialog::setup() const
     setup.setInlineMovies( m_inlineMovies->isChecked() );
     setup.setHtml5Video( m_html5Video->isChecked() );
     setup.setHtml5VideoGenerate( m_html5VideoGenerate->isChecked() );
-    //TODO : Use boolean !
     setup.setGenerateHTMLIndexFile( m_generateHTMLIndexFile[m_themeBox->currentIndex()] );
     setup.setGenerateHTMLImageFile( m_generateHTMLImageFile[m_themeBox->currentIndex()] );
     setup.setGenerateJSDatabase( m_generateJSDatabase[m_themeBox->currentIndex()]);

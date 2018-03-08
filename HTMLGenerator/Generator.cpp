@@ -649,7 +649,7 @@ bool HTMLGenerator::Generator::generateJSDatabase(){
                             found = true;
                         }
                     }
-                    if ( found == false){
+                    if ( !found ){
                         ListCategory << category;
                         Categories = Categories + category;
                     }        

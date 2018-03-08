@@ -275,7 +275,7 @@ function tg_getPhotos(photosDatabase){
   * photosDatabase: database
   * criteria: array of contidions like this [{"category":"cat1","value":"val1"}, {"category":"cat2","value":"val2"}]
   */
-  if(photosUptoDate == false){
+  if( !photosUptoDate ){
       photosUptoDate = true;
       console.log(nbPhotosToDisplay);
       selectedPhotos = computePhotos(photosDatabase);
