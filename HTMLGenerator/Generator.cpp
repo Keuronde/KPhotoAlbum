@@ -111,11 +111,12 @@ void HTMLGenerator::Generator::generate()
             if ( !ok )
                 return;
         }
-        
-        // Generating content page 
+
+        // Generating content page
         // Also generating the small images
         const DB::FileNameList imageList = m_setup.imageList();
         for (int index = 0; index < imageList.size(); ++index) {
+            qCDebug(HTMLGeneratorLog) << "." ;
             DB::FileName current = imageList.at(index);
             DB::FileName prev;
             DB::FileName next;
@@ -123,10 +124,19 @@ void HTMLGenerator::Generator::generate()
                 prev = imageList.at(index - 1);
             if (index != imageList.size() - 1)
                 next = imageList.at(index + 1);
-            bool ok = generateContentPage( (*sizeIt)->width(), (*sizeIt)->height(),
-                                      prev, current, next );
-            if (!ok)
-                return;
+            qCDebug(HTMLGeneratorLog) << current.relative() ;
+            if (m_setup.generateHTMLImageFile()){
+                // Create images and html page
+                bool ok = generateContentPage( (*sizeIt)->width(), (*sizeIt)->height(),
+                                          prev, current, next );
+                if (!ok){
+                    qCDebug(HTMLGeneratorLog) << "Generating small image => Failed";
+                    return;
+                }
+            }else{
+                // Only create the images
+                qCDebug(HTMLGeneratorLog) << createImage(current, (*sizeIt)->width());
+            }
         }
 
     }
@@ -150,7 +160,7 @@ void HTMLGenerator::Generator::generate()
 
     if ( wasCanceled() )
         return;
-    
+
     if ( m_setup.generateHTMLIndexFile() ){
         qCDebug(HTMLGeneratorLog) << "Linking image file...";
         bool ok = linkIndexFile();
@@ -410,8 +420,10 @@ bool HTMLGenerator::Generator::generateContentPage( int width, int height,
     QString themeDir, themeAuthor, themeName;
     getThemeInfo( &themeDir, &themeName, &themeAuthor );
     QString content = Utilities::readFile( QString::fromLatin1( "%1imagepage.html" ).arg( themeDir ));
-    if ( content.isEmpty() )
+    if ( content.isEmpty() ){
+        qCDebug(HTMLGeneratorLog) << "generateContentPage : content is empty";
         return false;
+    }
 
     DB::ImageInfoPtr info = current.info();
     const DB::FileName currentFile = info->fileName();
@@ -550,8 +562,10 @@ bool HTMLGenerator::Generator::generateContentPage( int width, int height,
     if(m_setup.generateHTMLImageFile()){
         QString fileName = m_tempDir.filePath(namePage( width, height, currentFile ));
         bool ok = writeToFile( fileName, content );
-        if ( !ok )
+        if ( !ok ){
+            qCDebug(HTMLGeneratorLog) << "generateContentPage : can't write to file";
             return false;
+        }
     }
 
     return true;
@@ -574,7 +588,7 @@ QString HTMLGenerator::Generator::nameImage( const DB::FileName& fileName, int s
         if ( name.endsWith( QString::fromLatin1(".jpg"), Qt::CaseSensitive ) ||
                 name.endsWith( QString::fromLatin1(".jpeg"), Qt::CaseSensitive ) )
             return name;
-        else 
+        else
             return base + QString::fromLatin1(".jpg");
         return name;
     } else if ( size == maxImageSize() && Utilities::isVideo( fileName ) ) {
@@ -606,37 +620,37 @@ QString HTMLGenerator::Generator::createImage( const DB::FileName& fileName, int
 bool HTMLGenerator::Generator::generateJSDatabase(){
     QStringList ListCategory;
     QString Images_data, Relations, Categories;
-    
+
     QString themeDir, themeAuthor, themeName;
     getThemeInfo( &themeDir, &themeName, &themeAuthor );
-    
+
     //m_setup.imageList()
-    
+
     // ----------------------------------------- GetData
     for (const DB::FileName& fileName : m_setup.imageList()) {
         const DB::ImageInfoPtr info = fileName.info();
         if ( wasCanceled() )
             return false;
         // fileName.absolute()
-        
-        Images_data = Images_data + QString::fromLatin1("{\"file\":\"") + 
-            nameImage( fileName, maxImageSize()) + 
+
+        Images_data = Images_data + QString::fromLatin1("{\"file\":\"") +
+            nameImage( fileName, maxImageSize()) +
             QString::fromLatin1("\"},\n");
-        
+
         QStringList grps = info->availableCategories();
-        
-        
+
+
         Q_FOREACH(const QString &name, grps ) {
             Utilities::StringSet items = info->itemsOfCategory(name);
-            
+
             Q_FOREACH( const QString &item, items ) {
                 //{"file":"new_wave_2.jpg","category":"Keywords","value":"new wave"},
-                Relations = Relations + QString::fromLatin1("{\"file\":\"") + 
-                    nameImage( fileName, maxImageSize()) + 
+                Relations = Relations + QString::fromLatin1("{\"file\":\"") +
+                    nameImage( fileName, maxImageSize()) +
                     QString::fromLatin1("\",\"category\":\"") + name +
                     QString::fromLatin1("\",\"value\":\"") + item +
                     QString::fromLatin1("\"},\n");
-                
+
                 // Build the list of category and value
                 QString category;
                 if(m_setup.includeCategory(name)){
@@ -652,23 +666,23 @@ bool HTMLGenerator::Generator::generateJSDatabase(){
                     if ( !found ){
                         ListCategory << category;
                         Categories = Categories + category;
-                    }        
-                }        
+                    }
+                }
             }
         }
     }
-    
+
     Images_data = Images_data.left(Images_data.length() - 2);
     Relations = Relations.left(Relations.length() - 2);
     Categories = Categories.left(Categories.length() - 2);
-    
+
     qCDebug(HTMLGeneratorLog).noquote() << Images_data.left(100);
     qCDebug(HTMLGeneratorLog).noquote() << Relations.left(100);
     qCDebug(HTMLGeneratorLog).noquote() << Categories.left(100);
-    
+
     // --------------------------------------------------- build config
     QString JSConfig = QString::fromLatin1("{\"ThumbSize\":%1}").arg(m_setup.thumbSize());
-    
+
     // --------------------------------------------- read template file
     qCDebug(HTMLGeneratorLog) << QString::fromLatin1( "%1photos.js" ).arg( themeDir );
     QString content = Utilities::readFile( QString::fromLatin1( "%1photos.js" ).arg( themeDir ));
@@ -681,7 +695,7 @@ bool HTMLGenerator::Generator::generateJSDatabase(){
     content = content.replace( QString::fromLatin1( "**RELATIONS**" ), Relations );
     content = content.replace( QString::fromLatin1( "**IMAGES_DATA**" ), Images_data );
     content = content.replace( QString::fromLatin1( "**CONFIG**" ), JSConfig );
-    
+
     // -------------------------------------------------- write to file
     QString fileName = m_tempDir.filePath(
                 QString::fromLatin1("photos.js" )
