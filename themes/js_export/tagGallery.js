@@ -200,6 +200,18 @@ function tg_getTagFamilies(photosDatabase){
   return myTagFamilies;
 }
 
+function computeThumbnailName(photoName){
+  var myPhotoFile = photoName.split('.');
+  myConfig = tg_getConfig()
+  myThumbFile = "thumbnails-" + myConfig.config.ThumbSize + "/";
+  for (var j=0; j < myPhotoFile.length - 1; j++){
+    myThumbFile = myThumbFile + myPhotoFile[j];
+  }
+  myThumbFile = myThumbFile + "-" + myConfig.config.ThumbSize;
+  myThumbFile = myThumbFile + "." + myPhotoFile[myPhotoFile.length - 1];
+  return myThumbFile
+}
+
 function computePhotos(photosDatabase){
         var i;
         var cat;
@@ -210,7 +222,11 @@ function computePhotos(photosDatabase){
         
         if (criteria.currentSearch.length == 0){
           for (i=0; i<photosDatabase.Images_data.length; i++){
-            selectedPhotos.push({"file":photosDatabase.Images_data[i].file});
+            var myPhotoName = photosDatabase.Images_data[i].file
+            var myThumbFile = computeThumbnailName(myPhotoName)
+            
+            selectedPhotos.push({"file":myPhotoName, "thumbFile":myThumbFile});
+            console.log(myThumbFile);
           }
           return selectedPhotos;
         }
@@ -260,6 +276,17 @@ function computePhotos(photosDatabase){
             first=false;
           }else{
             selectedPhotos = intersect_photos(selectedPhotos, photosForThisCategory);
+          }
+          
+          // Insert other data
+          // Thumbnail filename and path
+          console.log("test")
+
+          for(var i=0; i<selectedPhotos.length; i++){
+            var myPhotoName = selectedPhotos[i].file;
+            var myThumbFile = computeThumbnailName(myPhotoName);
+            selectedPhotos[i].thumbFile = myThumbFile;
+            console.log(myThumbFile);
           }
           
         } // FOR Category

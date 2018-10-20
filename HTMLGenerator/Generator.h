@@ -57,10 +57,13 @@ protected:
 
 public:
     QString namePage( int width, int height, const DB::FileName& fileName );
+    QString folderImage( int size );
     QString nameImage( const DB::FileName& fileName, int size );
 
     QString createImage( const DB::FileName& id, int size );
     QString createVideo( const DB::FileName& fileName );
+    
+    QDir getHTMLFolder(QDir tempDir);
 
     QString kimFileName( bool relative );
     bool writeToFile( const QString& fileName, const QString& str, bool toHTML=true );
