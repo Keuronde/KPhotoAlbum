@@ -12,7 +12,7 @@ imageshow_tpl=`
 `
 
 function lfg_init(){
-    links = [].slice.call(document.querySelectorAll("[rel^=lightbox]"));
+    links = [].slice.call(document.querySelectorAll("[data-gallery]"));
     links.forEach(
     function(element){
         element.addEventListener("click", lfg_start, false);
