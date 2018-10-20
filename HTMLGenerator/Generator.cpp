@@ -135,7 +135,7 @@ void HTMLGenerator::Generator::generate()
                 }
             }else{
                 // Only create the images
-                qCDebug(HTMLGeneratorLog) << createImage(current, (*sizeIt)->width());
+                createImage(current, (*sizeIt)->width());
             }
         }
 
