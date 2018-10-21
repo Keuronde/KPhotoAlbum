@@ -18,41 +18,28 @@
 
 #ifndef UTIL_H
 #define UTIL_H
-#include <qmap.h>
-#include <qset.h>
-#include <qstring.h>
-#include <qstringlist.h>
-#include <qimage.h>
-#include "Settings/SettingsData.h"
-#include "DB/ImageInfoList.h"
-#include <stdio.h>
-#include "DB/MD5.h"
+#include "DB/CategoryPtr.h"
+#include "DB/FileName.h"
+#include "DB/ImageInfoPtr.h"
 
-namespace DB
-{
-class ImageInfo;
-}
+#include <QImage>
+#include <QMap>
+#include <QSet>
+#include <QString>
+#include <QStringList>
 
 namespace Utilities
 {
-QString createInfoText( DB::ImageInfoPtr info, QMap<int, QPair<QString,QString> >* );
-QString formatAge(DB::CategoryPtr category,const QString& item, DB::ImageInfoPtr info);
 void checkForBackupFile( const QString& fileName, const QString& message = QString() );
-bool ctrlKeyDown();
 bool copy( const QString& from, const QString& to );
-void copyList( const QStringList& from, const QString& directoryTo );
 bool makeSymbolicLink( const QString& from, const QString& to );
 bool makeHardLink( const QString& from, const QString& to );
-void deleteDemo();
-QString setupDemo();
 bool canReadImage( const DB::FileName& fileName );
 const QSet<QString>& supportedVideoExtensions();
 bool isVideo( const DB::FileName& fileName );
 bool isRAW( const DB::FileName& fileName );
 QString locateDataFile(const QString& fileName);
 QString readFile( const QString& fileName );
-bool loadJPEG(QImage *img, const DB::FileName& imageFile, QSize* fullSize, int dim=-1);
-bool isJPEG( const DB::FileName& fileName );
 
 QString stripEndingForwardSlash( const QString& fileName );
 
@@ -66,15 +53,11 @@ QImage scaleImage(const QImage &image, const QSize& s, Qt::AspectRatioMode mode=
 
 QString cStringWithEncoding( const char *c_str, const QString& charset );
 
-DB::MD5 MD5Sum( const DB::FileName& fileName );
-
 QColor contrastColor( const QColor& );
 
 void saveImage( const DB::FileName& fileName, const QImage& image, const char* format );
 }
 
-bool operator>( const QPoint&, const QPoint& );
-bool operator<( const QPoint&, const QPoint& );
 
 #endif /* UTIL_H */
 

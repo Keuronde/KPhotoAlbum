@@ -26,15 +26,14 @@
 #include <KJobWidgets>
 #include <KJobUiDelegate>
 #include <kmessagebox.h>
-#include <QProgressDialog>
 #include <KConfigGroup>
 
-#include "Utilities/Util.h"
 #include "KimFileReader.h"
 #include "ImportSettings.h"
 #include "MainWindow/Window.h"
 #include "DB/ImageDB.h"
 #include "Browser/BrowserWidget.h"
+#include "DB/MD5.h"
 #include "DB/MD5Map.h"
 #include "DB/Category.h"
 #include "DB/CategoryCollection.h"
@@ -92,7 +91,7 @@ void ImportExport::ImportHandler::copyFromExternal()
     m_pendingCopies = m_settings.selectedImages();
     m_totalCopied = 0;
     m_progress = new QProgressDialog( MainWindow::Window::theMainWindow());
-    m_progress->setWindowTitle(i18n("Copying Images") );
+    m_progress->setWindowTitle(i18nc("@title:window", "Copying Images") );
     m_progress->setMinimum( 0 );
     m_progress->setMaximum( 2 * m_pendingCopies.count() );
     m_progress->show();
@@ -127,7 +126,7 @@ void ImportExport::ImportHandler::copyNextFromExternal()
         QUrl src (url);
         src.setPath(src.path() + fileName.relative() );
 
-        std::unique_ptr<KIO::StatJob> statJob { KIO::stat(src, KIO::StatJob::SourceSide, 0 /* just query for existance */ ) };
+        std::unique_ptr<KIO::StatJob> statJob { KIO::stat(src, KIO::StatJob::SourceSide, 0 /* just query for existence */ ) };
         KJobWidgets::setWindow(statJob.get(), MainWindow::Window::theMainWindow());
         if ( statJob->exec() )
         {
@@ -151,7 +150,7 @@ bool ImportExport::ImportHandler::copyFilesFromZipFile()
 
     m_totalCopied = 0;
     m_progress = new QProgressDialog( MainWindow::Window::theMainWindow());
-    m_progress->setWindowTitle(i18n("Copying Images") );
+    m_progress->setWindowTitle(i18nc("@title:window", "Copying Images") );
     m_progress->setMinimum( 0 );
     m_progress->setMaximum( 2 * m_pendingCopies.count() );
     m_progress->show();
@@ -318,7 +317,7 @@ void ImportExport::ImportHandler::addNewRecord( DB::ImageInfoPtr info )
     updateInfo->setDescription( info->description() );
     updateInfo->setDate( info->date() );
     updateInfo->setAngle( info->angle() );
-    updateInfo->setMD5Sum( Utilities::MD5Sum( updateInfo->fileName() ) );
+    updateInfo->setMD5Sum( DB::MD5Sum( updateInfo->fileName() ) );
 
 
     DB::ImageInfoList list;

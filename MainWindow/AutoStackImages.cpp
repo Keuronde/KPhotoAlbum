@@ -38,6 +38,7 @@
 #include <DB/ImageInfo.h>
 #include <DB/MD5Map.h>
 #include <MainWindow/Window.h>
+#include <Settings/SettingsData.h>
 #include <Utilities/ShowBusyCursor.h>
 #include <Utilities/Util.h>
 
@@ -46,7 +47,7 @@ using namespace MainWindow;
 AutoStackImages::AutoStackImages( QWidget* parent, const DB::FileNameList& list )
     :QDialog( parent ), m_list( list )
 {
-    setWindowTitle( i18n("Automatically Stack Images" ) );
+    setWindowTitle( i18nc("@title:window", "Automatically Stack Images" ) );
 
     QWidget* top = new QWidget;
     QVBoxLayout* lay1 = new QVBoxLayout( top );

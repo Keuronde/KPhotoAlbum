@@ -29,7 +29,6 @@
 #include <QCloseEvent>
 #include <QContextMenuEvent>
 #include <QCursor>
-#include <QDebug>
 #include <QElapsedTimer>
 #include <QDir>
 #include <QFrame>
@@ -85,6 +84,7 @@
 #include <Exif/Info.h>
 #include <Exif/ReReadDialog.h>
 #include <HTMLGenerator/HTMLDialog.h>
+#include <ImageManager/AsyncLoader.h>
 #include <ImageManager/ThumbnailBuilder.h>
 #include <ImageManager/ThumbnailCache.h>
 #include <ImportExport/Export.h>
@@ -97,6 +97,7 @@
 #include <Settings/SettingsDialog.h>
 #include <ThumbnailView/enums.h>
 #include <ThumbnailView/ThumbnailFacade.h>
+#include <Utilities/DemoUtil.h>
 #include <Utilities/List.h>
 #include <Utilities/ShowBusyCursor.h>
 #include <Utilities/Util.h>
@@ -216,17 +217,17 @@ MainWindow::Window::Window( QWidget* parent )
     connect( m_browser, SIGNAL(imageCount(uint)), m_statusBar->mp_partial, SLOT(showBrowserMatches(uint)) );
     connect(m_thumbnailView, &ThumbnailView::ThumbnailFacade::selectionChanged, this, &Window::updateContextMenuFromSelectionSize);
 
+    checkIfMplayerIsInstalled();
+    executeStartupActions();
+
+    qCInfo(TimingLog) << "MainWindow: executeStartupActions " << timer.restart() << "ms.";
     QTimer::singleShot( 0, this, SLOT(delayedInit()) );
     updateContextMenuFromSelectionSize(0);
 
     // Automatically save toolbar settings
     setAutoSaveSettings();
 
-    checkIfMplayerIsInstalled();
-
     qCInfo(TimingLog) << "MainWindow: misc setup time: " << timer.restart() << "ms.";
-    executeStartupActions();
-    qCInfo(TimingLog) << "MainWindow: executeStartupActions " << timer.restart() << "ms.";
 }
 
 MainWindow::Window::~Window()
@@ -246,7 +247,7 @@ void MainWindow::Window::delayedInit()
 
 
     if ( Settings::SettingsData::instance()->searchForImagesOnStart() ||
-	 Options::the()->searchForImagesOnStart() ) {
+         Options::the()->searchForImagesOnStart() ) {
         splash->message( i18n("Searching for New Files") );
         qApp->processEvents();
         DB::ImageDB::instance()->slotRescan();
@@ -261,6 +262,7 @@ void MainWindow::Window::delayedInit()
 
     splash->done();
     show();
+    updateDateBar();
     qCInfo(TimingLog) << "MainWindow: MainWindow.show():" << timer.restart() << "ms.";
 
     QUrl importUrl = Options::the()->importFile();
@@ -274,11 +276,8 @@ void MainWindow::Window::delayedInit()
         KTipDialog::showTip( this );
     }
 
-    Exif::Database* exifDB = Exif::Database::instance(); // Load the database
-    if ( exifDB->isAvailable() && !exifDB->isOpen() ) {
-        KMessageBox::sorry( this, i18n("EXIF database cannot be opened. Check that the image root directory is writable.") );
-    }
-    qCInfo(TimingLog) << "MainWindow: Loading EXIF DB:" << timer.restart() << "ms.";
+    Exif::Database::instance(); // Load the database
+    qCInfo(TimingLog) << "MainWindow: Loading Exif DB:" << timer.restart() << "ms.";
 
     if (!Options::the()->listen().isNull())
         RemoteControl::RemoteInterface::instance().listen(Options::the()->listen());
@@ -324,8 +323,11 @@ bool MainWindow::Window::slotExit()
             QDir().remove( Settings::SettingsData::instance()->imageDirectory() + QString::fromLatin1(".#index.xml") );
         }
     }
+    // Flush any remaining thumbnails
+    ImageManager::ThumbnailCache::instance()->save();
 
 doQuit:
+    ImageManager::AsyncLoader::instance()->requestExit();
     qApp->quit();
     return true;
 }
@@ -486,6 +488,7 @@ void MainWindow::Window::slotSave()
     Utilities::ShowBusyCursor dummy;
     m_statusBar->showMessage(i18n("Saving..."), 5000 );
     DB::ImageDB::instance()->save( Settings::SettingsData::instance()->imageDirectory() + QString::fromLatin1("index.xml"), false );
+    ImageManager::ThumbnailCache::instance()->save();
     m_statusBar->mp_dirtyIndicator->saved();
     QDir().remove( Settings::SettingsData::instance()->imageDirectory() + QString::fromLatin1(".#index.xml") );
     m_statusBar->showMessage(i18n("Saving... Done"), 5000 );
@@ -538,7 +541,7 @@ void MainWindow::Window::slotPasteInformation()
     // fail silent if there is no file.
     if (fileName.isNull()) return;
 
-    MD5 originalSum = Utilities::MD5Sum( fileName );
+    MD5 originalSum = MD5Sum( fileName );
     ImageInfoPtr originalInfo;
     if ( DB::ImageDB::instance()->md5Map()->contains( originalSum ) ) {
         originalInfo = DB::ImageDB::instance()->info( fileName );
@@ -880,7 +883,7 @@ void MainWindow::Window::setupMenuBar()
     recreateExif->setText( i18n("Recreate Exif Search Database") );
 
     QAction* rereadExif = actionCollection()->addAction( QString::fromLatin1("reReadExifInfo"), this, SLOT(slotReReadExifInfo()) );
-    rereadExif->setText( i18n("Read EXIF Info From Files...") );
+    rereadExif->setText( i18n("Read Exif Info from Files...") );
 
     m_sortAllByDateAndTime = actionCollection()->addAction( QString::fromLatin1("sortAllImages"), this, SLOT(slotSortAllByDateAndTime()) );
     m_sortAllByDateAndTime->setText( i18n("Sort All by Date && Time") );
@@ -892,7 +895,6 @@ void MainWindow::Window::setupMenuBar()
     a = actionCollection()->addAction( QString::fromLatin1("buildThumbs"), this, SLOT(slotBuildThumbnails()) );
     a->setText( i18n("Build Thumbnails") );
 
-    a = actionCollection()->addAction( QString::fromLatin1("statistics"), this, SLOT(slotStatistics()) );
     a->setText( i18n("Statistics...") );
 
     m_markUntagged = actionCollection()->addAction(QString::fromUtf8("markUntagged"),
@@ -993,6 +995,7 @@ void MainWindow::Window::slotAutoSave()
         Utilities::ShowBusyCursor dummy;
         m_statusBar->showMessage(i18n("Auto saving...."));
         DB::ImageDB::instance()->save( Settings::SettingsData::instance()->imageDirectory() + QString::fromLatin1(".#index.xml"), true );
+        ImageManager::ThumbnailCache::instance()->save();
         m_statusBar->showMessage(i18n("Auto saving.... Done"), 5000);
         m_statusBar->mp_dirtyIndicator->autoSaved();
     }
@@ -1284,7 +1287,8 @@ void MainWindow::Window::slotConfigureKeyBindings()
     Q_FOREACH( const KIPI::PluginLoader::Info *pluginInfo, m_pluginLoader->pluginList() ) {
         KIPI::Plugin* plugin = pluginInfo->plugin();
         if ( plugin )
-            dialog->addCollection( plugin->actionCollection(), pluginInfo->comment() );
+            dialog->addCollection( plugin->actionCollection(),
+                                   i18nc("Add 'Plugin' prefix so that KIPI plugins are obvious in KShortcutsDialog…","Plugin: %1", pluginInfo->name()) );
     }
 #endif
 
@@ -1545,7 +1549,7 @@ void MainWindow::Window::plug()
                 batchActions.append( action );
 
             else {
-                qDebug() << "Unknown category\n";
+                qCWarning(MainWindowLog) << "Unknown category\n";
             }
         }
         KConfigGroup group = KSharedConfig::openConfig()->group( QString::fromLatin1("Shortcuts") );
@@ -1586,7 +1590,7 @@ void MainWindow::Window::slotImagesChanged( const QList<QUrl>& urls )
             // This seems to be the case with the border image plugin, which reports the destination image
             ImageManager::ThumbnailCache::instance()->removeThumbnail( fileName );
             // update MD5sum:
-            MD5 md5sum = Utilities::MD5Sum( fileName );
+            MD5 md5sum = MD5Sum( fileName );
             fileName.info()->setMD5Sum( md5sum );
         }
     }

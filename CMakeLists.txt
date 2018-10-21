@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2.0)
-project(kphotoalbum VERSION 5.3)
+project(kphotoalbum VERSION 5.4)
 
 if(POLICY CMP0063)
     cmake_policy(SET CMP0063 NEW)
@@ -35,9 +35,9 @@ set(CMAKE_CXX_REQUIRED TRUE)
 
 ########### dependencies  ###############
 
-find_package(Qt5 REQUIRED COMPONENTS Sql Xml Widgets Network)
+find_package(Qt5 5.9 REQUIRED COMPONENTS Sql Xml Widgets Network)
 find_package(Phonon4Qt5 REQUIRED)
-find_package(KF5 REQUIRED COMPONENTS Archive Completion Config CoreAddons DocTools I18n IconThemes JobWidgets KIO TextWidgets XmlGui WidgetsAddons)
+find_package(KF5 5.44 REQUIRED COMPONENTS Archive Completion Config CoreAddons DocTools I18n IconThemes JobWidgets KIO TextWidgets XmlGui WidgetsAddons)
 
 find_package(JPEG REQUIRED)
 if(JPEG_FOUND)
@@ -216,6 +216,9 @@ set(libUtilities_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/JpeglibWithFix.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/QStr.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/StringSet.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/FastJpeg.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/DemoUtil.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/DescriptionUtil.cpp
     )
 
 set(libMainWindow_SRCS
@@ -283,6 +286,7 @@ set(libDB_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/DB/FileInfo.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/DB/NegationCategoryMatcher.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/DB/NewImageFinder.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/DB/ImageScout.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/DB/NoTagCategoryMatcher.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/DB/GroupCounter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/DB/CategoryMatcher.cpp
@@ -293,6 +297,7 @@ set(libDB_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/DB/OrCategoryMatcher.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/DB/AndCategoryMatcher.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/DB/FastDir.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/DB/OptimizedFileList.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/DB/FileName.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/DB/FileNameList.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/DB/Logging.cpp
