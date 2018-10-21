@@ -544,7 +544,7 @@ void HTMLDialog::populateThemesCombo()
             m_generateHTMLIndexFile.insert( i, config.readEntry( "NeedHTMLIndexFile" ) == QString::fromLatin1("true") );
             m_generateHTMLImageFile.insert( i, config.readEntry( "NeedHTMLImageFile" ) == QString::fromLatin1("true") );
             m_generateJSDatabase.insert( i, config.readEntry( "NeedJSDatabase" ) == QString::fromLatin1("true") );
-            
+
             //m_themeBox->insertItem( i, i18n( "%1 (by %2)",themeName, themeAuthor ) ); // combined alternative
             m_themeBox->insertItem( i, i18n( "%1",themeName) );
             m_themes.insert( i, themePath );

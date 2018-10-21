@@ -62,7 +62,7 @@ public:
 
     QString createImage( const DB::FileName& id, int size );
     QString createVideo( const DB::FileName& fileName );
-    
+
     QDir getHTMLFolder(QDir tempDir);
 
     QString kimFileName( bool relative );

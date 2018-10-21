@@ -23,18 +23,18 @@ function lfg_start(event){
 
     event.preventDefault();
     event.stopPropagation();
-    
+
     // Backup scroll
     scrollPosition = window.pageYOffset;
     console.log(scrollPosition)
-    
+
     // find all images in the gallery
     var galleryName = this.getAttribute("data-gallery");
     galleryNode = [].slice.call(document.querySelectorAll("[data-gallery^="+galleryName+"]"));
     gallery=[];
     imagePositionInGallery=0;
     imageHref = this.getAttribute('href');
-    
+
     // Build gallery array and find current position
     galleryNode.forEach(
     function(element){
@@ -71,7 +71,7 @@ function lfg_start(event){
           touchendY = event.changedTouches[0].screenY;
           console.log('swipe end');
           handleGesture();
-    }, false); 
+    }, false);
 
 
     return false;
@@ -148,19 +148,19 @@ function handleGesture() {
     if (touchendX <= touchstartX) {
         console.log('Swiped left');
     }
-    
+
     if (touchendX >= touchstartX) {
         console.log('Swiped right');
     }
-    
+
     if (touchendY <= touchstartY) {
         console.log('Swiped up');
     }
-    
+
     if (touchendY >= touchstartY) {
         console.log('Swiped down');
     }
-    
+
     if (touchendY === touchstartY) {
         console.log('Tap');
     }

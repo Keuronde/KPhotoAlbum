@@ -23,3 +23,5 @@ AndroidRemoteControl/AndroidRemoteControl.pro.user
 build-*
 version.h
 *.pyc
+*.patch
+build/

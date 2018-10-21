@@ -86,7 +86,7 @@ void HTMLGenerator::Generator::generate()
             return;
         }
     }
-    
+
     if ( m_setup.generateJSDatabase() ) {
         qCDebug(HTMLGeneratorLog) << "Generating JS Database...";
         generateJSDatabase();
@@ -347,7 +347,7 @@ bool HTMLGenerator::Generator::generateIndexPage( int width, int height )
 						  QString::fromLatin1( "%1/%2" )
 						  .arg(folderImage( m_setup.thumbSize() ))
 						  .arg(nameImage( fileName, m_setup.thumbSize()   )) );
-                          
+
         img.setAttribute( QString::fromLatin1( "alt" ),
 						  nameImage( fileName, m_setup.thumbSize() ) );
         href.appendChild( img );
@@ -464,7 +464,7 @@ bool HTMLGenerator::Generator::generateContentPage( int width, int height,
         QString videoBase = videoFile.replace( QRegExp( QString::fromLatin1("\\..*") ), QString::fromLatin1("") );
         if ( m_setup.inlineMovies() )
             if ( m_setup.html5Video() )
-                content.replace( QString::fromLatin1( "**IMAGE_OR_VIDEO**" ), 
+                content.replace( QString::fromLatin1( "**IMAGE_OR_VIDEO**" ),
 					QString::fromLatin1( "<video controls><source src=\"%4\" type=\"video/mp4\" />\
 											<source src=\"%5\" type=\"video/ogg\" />\
 											<object data=\"%1\">\
@@ -484,7 +484,7 @@ bool HTMLGenerator::Generator::generateContentPage( int width, int height,
 						.arg( QString::fromLatin1("../%1/%2").arg(folderImage(256), createImage( current, 256 )) )
 						.arg( videoFile ) );
         else
-            content.replace( QString::fromLatin1( "**IMAGE_OR_VIDEO**" ), 
+            content.replace( QString::fromLatin1( "**IMAGE_OR_VIDEO**" ),
 				QString::fromLatin1( "<a href=\"**NEXTPAGE**\"><img src=\"%2\"/></a>" "<a href=\"../%1\"><img src=\"../download.png\"/></a>")
 					.arg(videoFile)
 					.arg( QString::fromLatin1("../%1/%2").arg(folderImage(256), createImage( current, 256 )) ) );
@@ -728,15 +728,15 @@ bool HTMLGenerator::Generator::generateJSDatabase(){
     qCDebug(HTMLGeneratorLog).noquote() << Categories.left(100);
 
     // --------------------------------------------------- build config
-    
+
     QString description = m_setup.description().replace(QString::fromLatin1("\\"),QString::fromLatin1("\\\\"));
     description = description.replace(QString::fromLatin1("\""),QString::fromLatin1("\\\""));
     QString title = m_setup.title().replace(QString::fromLatin1("\\"),QString::fromLatin1("\\\\"));
     title = title.replace(QString::fromLatin1("\""),QString::fromLatin1("\\\""));
-    
+
     QString JSConfig = QString::fromLatin1("{\"ThumbSize\":%1,\"title\":\"%2\",\"description\":\"%3\"}").arg(m_setup.thumbSize()).arg(
 			title, description);
-    
+
     // --------------------------------------------- read template file
     qCDebug(HTMLGeneratorLog) << QString::fromLatin1( "%1photos.js" ).arg( themeDir );
     QString content = Utilities::readFile( QString::fromLatin1( "%1photos.js" ).arg( themeDir ));
@@ -885,7 +885,7 @@ void HTMLGenerator::Generator::pixmapLoaded(ImageManager::ImageRequest* request,
 	QDir tempPhotosDir = m_tempDir;
 	tempPhotosDir.cd(photoFolder);
 	file = tempPhotosDir.filePath( nameImage( fileName, size ) );
-		
+
 
     bool success = loadedOK && image.save( file, "JPEG" );
     if ( !success ) {

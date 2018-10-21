@@ -1,5 +1,5 @@
 
-var photosDatabase = 
+var photosDatabase =
 {
     "Categories":
     [
@@ -10,13 +10,12 @@ var photosDatabase =
         **IMAGES_DATA**
     ],
     "Relations":
-    [ 
+    [
         **RELATIONS**
     ]
  };
 
-var photosDatabaseConfig = 
+var photosDatabaseConfig =
 {
     "config": **CONFIG**
-    
-}
+};

@@ -30,7 +30,7 @@ var tags_tpl = `
       </ul>
     </li>
   <!-- END tags -->
-  {{/categories}}  
+  {{/categories}}
   </ul>
 `;
 var photos_tpl = `
@@ -124,7 +124,7 @@ function computeCategory()
           }
         }
       }
-      if(toAdd == true){      
+      if(toAdd == true){
        familyTags.push(familyTags_ref[k]);
       }
     }
@@ -139,8 +139,6 @@ function refresh(){
   var CategoryAndValue = computeCategory();
   var selectedPhotos = tg_getPhotos(photosDatabase);
 
-  
-  
   if(!tg_AreAllPhotosDisplayed()){
     if(  window.onscroll === null){
           window.onscroll = function() {myScroll()};
@@ -161,7 +159,6 @@ function refresh(){
   }else{
     document.getElementById('search').innerHTML = "";
   }
-  
 
   //Parse it (optional, only necessary if template is to be used again)
   Mustache.parse(tags_tpl);
@@ -180,8 +177,6 @@ function refresh(){
 
   // PhotoViewer:
   lfg_init();
-
-  
 }
 
 

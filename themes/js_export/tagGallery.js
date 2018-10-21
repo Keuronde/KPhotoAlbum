@@ -67,7 +67,7 @@ function tg_toggleBoolOp(myBoolOp){
   Inputs:
   * myBoolOp = {"category":xxx, "boolOp":"AND" or "OR"}
   */
-  
+
   var newBoolOp, cat;
   // Define new boolean operation
   if(myBoolOp.boolOp == "AND"){
@@ -75,7 +75,7 @@ function tg_toggleBoolOp(myBoolOp){
   }else{
     newBoolOp = "AND"
   }
-  
+
   // Find category and apply
   for (cat=0; cat<criteria.currentSearch.length; cat++){
     if(criteria.currentSearch[cat].category == myBoolOp.category){
@@ -83,12 +83,12 @@ function tg_toggleBoolOp(myBoolOp){
     }
   }
   photosUptoDate = false;
-  
+
 }
 
 function tg_getCriteriaToRenderSearchPanel(){
   rendercriteria = criteria;
-  
+
   for(var cat=0; cat < rendercriteria.currentSearch.length; cat++){
     if(rendercriteria.currentSearch[cat].values.length > 1){
       rendercriteria.currentSearch[cat].onlyone=false;
@@ -123,7 +123,7 @@ function tg_delCriteria(myCrit){
       // If the category is found, remove the value
          myIndex = criteria.currentSearch[cat].values.indexOf(myCrit.value);
          criteria.currentSearch[cat].values.splice(myIndex,1);
-           
+
          // If there are no more values, remove the category
          if(criteria.currentSearch[cat].values.length == 0){
            criteria.currentSearch.splice(cat,1);
@@ -134,7 +134,7 @@ function tg_delCriteria(myCrit){
   }
 
   photosUptoDate = false;
-  
+
 }
 
 function tg_addCriteria(myCrit){
@@ -152,7 +152,7 @@ function tg_addCriteria(myCrit){
       categoryIsPresent=true
     }
   }
-  
+
   // If the category is not found, ad it with the value
   if (categoryIsPresent==false){
     criteria.currentSearch.push({
@@ -218,13 +218,10 @@ function computePhotos(photosDatabase){
         var val;
       selectedPhotos=[]
 
-        
-        
         if (criteria.currentSearch.length == 0){
           for (i=0; i<photosDatabase.Images_data.length; i++){
             var myPhotoName = photosDatabase.Images_data[i].file
             var myThumbFile = computeThumbnailName(myPhotoName)
-            
             selectedPhotos.push({"file":myPhotoName, "thumbFile":myThumbFile});
             console.log(myThumbFile);
           }
@@ -238,16 +235,15 @@ function computePhotos(photosDatabase){
           var firstValue=true;
           for(val=0; val<criteria.currentSearch[cat].values.length; val++){
             var photosForThisValue=[];
-            
+
             for(i=0; i<photosDatabase.Relations.length; i++){
-              
               if(photosDatabase.Relations[i].category == criteria.currentSearch[cat].category &&
                  photosDatabase.Relations[i].value == criteria.currentSearch[cat].values[val]){
                 
                 photosForThisValue.push({"file":photosDatabase.Relations[i].file});
               }
             } // FOR Relations
-            
+
             if(criteria.currentSearch[cat].boolOp == "AND"){
               // AND logic
 
@@ -277,7 +273,7 @@ function computePhotos(photosDatabase){
           }else{
             selectedPhotos = intersect_photos(selectedPhotos, photosForThisCategory);
           }
-          
+
           // Insert other data
           // Thumbnail filename and path
           console.log("test")
@@ -288,9 +284,9 @@ function computePhotos(photosDatabase){
             selectedPhotos[i].thumbFile = myThumbFile;
             console.log(myThumbFile);
           }
-          
+
         } // FOR Category
-        
+
         return selectedPhotos;
 }
 
@@ -306,11 +302,8 @@ function tg_getPhotos(photosDatabase){
       photosUptoDate = true;
       console.log(nbPhotosToDisplay);
       selectedPhotos = computePhotos(photosDatabase);
-
       // Reset the number of displayed photos
       nbPhotosToDisplay=nbMorePhotos;
-      
-      
   }
   selectedPhotosForPage = selectedPhotos.slice(0,nbPhotosToDisplay);
   config = tg_getConfig();

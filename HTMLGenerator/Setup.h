@@ -89,10 +89,10 @@ public:
 
     void setGenerateHTMLIndexFile( bool generateHTMLIndexFile );
     bool generateHTMLIndexFile() const;
-    
+
     void setGenerateHTMLImageFile( bool generateHTMLImageFile );
     bool generateHTMLImageFile() const;
-    
+
     void setGenerateJSDatabase( bool generateJSDatabase );
     bool generateJSDatabase() const;
 
