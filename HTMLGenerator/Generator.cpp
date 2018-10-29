@@ -254,24 +254,24 @@ bool HTMLGenerator::Generator::generateIndexPage( int width, int height )
         row.appendChild( col );
 
         if (first.isEmpty())
-            first = namePage( width, height, fileName);
+            first = QString::fromLatin1( "html/%2" ).arg(namePage( width, height, fileName));
         else
-            last = namePage( width, height, fileName);
+            last = QString::fromLatin1( "html/%2" ).arg(namePage( width, height, fileName));
 
         if (!Utilities::isVideo(fileName))
         {
             QMimeDatabase db;
             images += QString::fromLatin1( "gallery.push([\"%1\", \"%2\", \"%3\", \"%4\", \"" )
-                    .arg( nameImage( fileName, width ) )
-                    .arg( nameImage( fileName, m_setup.thumbSize()) )
-                    .arg( nameImage( fileName, maxImageSize()) )
+                    .arg(QString::fromLatin1( "%1/%2" ).arg(folderImage( m_setup.thumbSize() )).arg(nameImage( fileName, m_setup.thumbSize())) )
+                    .arg(QString::fromLatin1( "%1/%2" ).arg(folderImage( m_setup.thumbSize() )).arg(nameImage( fileName, m_setup.thumbSize())) )
+                    .arg(QString::fromLatin1( "%1/%2" ).arg(folderImage( maxImageSize() )).arg(nameImage( fileName, maxImageSize())) )
                     .arg( db.mimeTypeForFile( nameImage( fileName, maxImageSize() ) ).name() );
         } else {
             QMimeDatabase db;
             images += QString::fromLatin1( "gallery.push([\"%1\", \"%2\", \"%3\"" )
-                    .arg( nameImage( fileName, m_setup.thumbSize() ) )
-                    .arg( nameImage( fileName, m_setup.thumbSize() ) )
-                    .arg( nameImage( fileName, maxImageSize() ) );
+                    .arg(QString::fromLatin1( "%1/%2" ).arg(folderImage( m_setup.thumbSize() )).arg(nameImage( fileName, m_setup.thumbSize())) )
+                    .arg(QString::fromLatin1( "%1/%2" ).arg(folderImage( m_setup.thumbSize() )).arg(nameImage( fileName, m_setup.thumbSize())) )
+                    .arg(QString::fromLatin1( "%1/%2" ).arg(folderImage( maxImageSize() )).arg( nameImage( fileName, maxImageSize() ) ));
             if ( m_setup.html5VideoGenerate() )
             {
                 images += QString::fromLatin1( ", \"%1\", \"" )
@@ -312,12 +312,14 @@ bool HTMLGenerator::Generator::generateIndexPage( int width, int height )
 
         QDomElement href = doc.createElement( QString::fromLatin1( "a" ) );
         href.setAttribute( QString::fromLatin1( "href" ),
-                           namePage( width, height, fileName));
+                           QString::fromLatin1( "html/%2" ).arg(namePage( width, height, fileName)) );
         col.appendChild( href );
 
         QDomElement img = doc.createElement( QString::fromLatin1( "img" ) );
         img.setAttribute( QString::fromLatin1( "src" ),
-                          nameImage( fileName, m_setup.thumbSize() ) );
+                          QString::fromLatin1( "%1/%2" )
+                          .arg(folderImage( m_setup.thumbSize() ))
+                          .arg(nameImage( fileName, m_setup.thumbSize()   )) );
         img.setAttribute( QString::fromLatin1( "alt" ),
                           nameImage( fileName, m_setup.thumbSize() ) );
         href.appendChild( img );
@@ -432,14 +434,34 @@ bool HTMLGenerator::Generator::generateContentPage( int width, int height,
         QString videoBase = videoFile.replace( QRegExp( QString::fromLatin1("\\..*") ), QString::fromLatin1("") );
         if ( m_setup.inlineMovies() )
             if ( m_setup.html5Video() )
-                content.replace( QString::fromLatin1( "**IMAGE_OR_VIDEO**" ), QString::fromLatin1( "<video controls><source src=\"%4\" type=\"video/mp4\" /><source src=\"%5\" type=\"video/ogg\" /><object data=\"%1\"><img src=\"%2\" alt=\"download\"/></object></video><a href=\"%3\"><img src=\"download.png\" /></a>").arg( QString::fromLatin1("%1.mp4").arg( videoBase ) ).arg( createImage( current, 256 ) ).arg( QString::fromLatin1("%1.mp4").arg( videoBase ) ).arg( QString::fromLatin1("%1.mp4").arg( videoBase ) ).arg( QString::fromLatin1("%1.ogg").arg( videoBase ) ) );
+                content.replace( QString::fromLatin1( "**IMAGE_OR_VIDEO**" ),
+                    QString::fromLatin1( "<video controls><source src=\"%4\" type=\"video/mp4\" />\
+                                            <source src=\"%5\" type=\"video/ogg\" />\
+                                            <object data=\"%1\">\
+                                              <img src=\"%2\" alt=\"download\"/>\
+                                            </object>\
+                                          </video>\
+                                          <a href=\"%3\"><img src=\"../download.png\" /></a>")
+                                          .arg( QString::fromLatin1("%1.mp4").arg( videoBase ) )
+                                          .arg( QString::fromLatin1("../%1/%2").arg(folderImage(256), createImage( current, 256 )) )
+                                          .arg( QString::fromLatin1("%1.mp4").arg( videoBase ) )
+                                          .arg( QString::fromLatin1("%1.mp4").arg( videoBase ) )
+                                          .arg( QString::fromLatin1("%1.ogg").arg( videoBase ) ) );
             else
-                content.replace( QString::fromLatin1( "**IMAGE_OR_VIDEO**" ), QString::fromLatin1( "<object data=\"%1\"><img src=\"%2\"/></object>" "<a href=\"%3\"><img src=\"download.png\"/></a>").arg(videoFile).arg( createImage( current, 256 ) ).arg( videoFile ) );
+                content.replace( QString::fromLatin1( "**IMAGE_OR_VIDEO**" ),
+                    QString::fromLatin1( "<object data=\"%1\"><img src=\"%2\"/></object>" "<a href=\"../%4\"><img src=\"../download.png\"/></a>")
+                        .arg(videoFile)
+                        .arg( QString::fromLatin1("../%1/%2").arg(folderImage(256), createImage( current, 256 )) )
+                        .arg( videoFile ) );
         else
-            content.replace( QString::fromLatin1( "**IMAGE_OR_VIDEO**" ), QString::fromLatin1( "<a href=\"**NEXTPAGE**\"><img src=\"%2\"/></a>" "<a href=\"%1\"><img src=\"download.png\"/></a>").arg(videoFile).arg( createImage( current, 256 ) ) );
+            content.replace( QString::fromLatin1( "**IMAGE_OR_VIDEO**" ),
+                QString::fromLatin1( "<a href=\"**NEXTPAGE**\"><img src=\"%2\"/></a>" "<a href=\"../%1\"><img src=\"../download.png\"/></a>")
+                    .arg(videoFile)
+                    .arg( QString::fromLatin1("../%1/%2").arg(folderImage(256), createImage( current, 256 )) ) );
     } else
         content.replace( QString::fromLatin1( "**IMAGE_OR_VIDEO**" ),
-                         QString::fromLatin1( "<a href=\"**NEXTPAGE**\"><img src=\"%1\" alt=\"%1\"/></a>")
+                         QString::fromLatin1( "<a href=\"**NEXTPAGE**\"><img src=\"../%1/%2\" alt=\"%2\"/></a>")
+                         .arg(folderImage( width ) )
                          .arg(createImage( current, width ) ) );
 
 
@@ -462,11 +484,11 @@ bool HTMLGenerator::Generator::generateContentPage( int width, int height,
     content.replace( QString::fromLatin1( "**PREVFILE**" ), link );
 
     // index link
-    link = i18n( "<a href=\"index-%1.html\">index</a>", ImageSizeCheckBox::text(width,height,true));
+    link = i18n( "<a href=\"../index-%1.html\">index</a>", ImageSizeCheckBox::text(width,height,true));
     content.replace( QString::fromLatin1( "**INDEX**" ), link );
 
     // indexfile
-    link = QString::fromLatin1( "index-%1.html").arg(ImageSizeCheckBox::text(width,height,true));
+    link = QString::fromLatin1( "../index-%1.html").arg(ImageSizeCheckBox::text(width,height,true));
     content.replace( QString::fromLatin1( "**INDEXFILE**" ), link );
 
     // Next Link
@@ -486,7 +508,7 @@ bool HTMLGenerator::Generator::generateContentPage( int width, int height,
     if ( !next.isNull() )
         link = namePage(width, height, next);
     else
-        link = QString::fromLatin1( "index-%1.html" ).arg(ImageSizeCheckBox::text(width,height,true));
+        link = QString::fromLatin1( "../index-%1.html" ).arg(ImageSizeCheckBox::text(width,height,true));
 
     content.replace( QString::fromLatin1( "**NEXTPAGE**" ), link );
 
@@ -545,11 +567,26 @@ QString HTMLGenerator::Generator::namePage( int width, int height, const DB::Fil
     return QString::fromLatin1( "%1-%2.html" ).arg( base ).arg( ImageSizeCheckBox::text(width,height,true) );
 }
 
+QString HTMLGenerator::Generator::folderImage( int size ){
+    QString photoFolder;
+    // Put photos in the right folder
+    // Build folder name
+    if ( size == maxImageSize()){
+        photoFolder = QString::fromLatin1("media");
+    }else{
+        photoFolder = QString::fromLatin1( "thumbnails-%1" ).arg( size );
+    }
+    return photoFolder;
+}
+
+
 QString HTMLGenerator::Generator::nameImage( const DB::FileName& fileName, int size )
 {
     QString name = m_filenameMapper.uniqNameFor(fileName);
     QString base = QFileInfo( name ).completeBaseName();
     if ( size == maxImageSize() && !Utilities::isVideo( fileName ) ) {
+        // This code change the extension of the max size image. Why ?
+        // ==> Probably because the name of the thumbnail is modified somewhere, but where ? Why ?
         if ( name.endsWith( QString::fromLatin1(".jpg"), Qt::CaseSensitive ) ||
                 name.endsWith( QString::fromLatin1(".jpeg"), Qt::CaseSensitive ) )
             return name;
@@ -557,8 +594,10 @@ QString HTMLGenerator::Generator::nameImage( const DB::FileName& fileName, int s
             return base + QString::fromLatin1(".jpg");
     } else if ( size == maxImageSize() && Utilities::isVideo( fileName ) ) {
         return name;
-    } else
+    } else {
+        // TODO : What if our image is not a JPEG ?
         return QString::fromLatin1( "%1-%2.jpg" ).arg( base ).arg( size );
+    }
 }
 
 QString HTMLGenerator::Generator::createImage( const DB::FileName& fileName, int size )
