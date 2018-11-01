@@ -718,7 +718,20 @@ void HTMLGenerator::Generator::pixmapLoaded(ImageManager::ImageRequest* request,
     m_waitCounter--;
 
     int size = imgSize.width();
-    QString file = m_tempDir.filePath( nameImage( fileName, size ) );
+    QString file, photoFolder;
+    // Put photos in the right folder
+    // Build folder name
+    photoFolder = folderImage( size );
+    // Create folder if needed
+    if (!m_tempDir.exists(photoFolder)){
+        if(!m_tempDir.mkdir(photoFolder)){
+            slotCancelGenerate();
+            KMessageBox::error( this, i18n("Unable to create folder '%1' / %2 .", m_tempDir.path(), QString::fromLatin1( "photos") ) );
+        }
+    }
+    QDir tempPhotosDir = m_tempDir;
+    tempPhotosDir.cd(photoFolder);
+    file = tempPhotosDir.filePath( nameImage( fileName, size ) );
 
     bool success = loadedOK && image.save( file, "JPEG" );
     if ( !success ) {

@@ -60,6 +60,7 @@ public:
 
     QString createImage( const DB::FileName& id, int size );
     QString createVideo( const DB::FileName& fileName );
+    QString folderImage( int size );
 
     QString kimFileName( bool relative );
     bool writeToFile( const QString& fileName, const QString& str );
